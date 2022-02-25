@@ -15,7 +15,7 @@ namespace ADO.NetEmployeePayRollProgram
             Console.WriteLine("Welcome TO The ADO.Net Employee Payroll Sercive Program");
             Console.ReadLine();
 
-            //Calling the Get All Employee(UC1)
+            //Calling the emplaoyee method to print all the record from the database(UC1&UC2)
             EmployeeRepository.GetAllEmployees();
         }
     }
