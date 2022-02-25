@@ -13,7 +13,10 @@ namespace ADO.NetEmployeePayRollProgram
         {
             //Displaying the welcome message
             Console.WriteLine("Welcome TO The ADO.Net Employee Payroll Sercive Program");
-            Console.ReadLine(); 
+            Console.ReadLine();
+
+            //Calling the Get All Employee(UC1)
+            EmployeeRepository.GetAllEmployees();
         }
     }
 }
