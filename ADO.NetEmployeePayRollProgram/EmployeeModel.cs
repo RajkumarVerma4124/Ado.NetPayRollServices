@@ -15,18 +15,21 @@ namespace ADO.NetEmployeePayRollProgram
         public DateTime StartDate { get; set; }
         public char Gender { get; set; }
         public string Address { get; set; }
-        public string Department { get; set; }
+        public int DepartmentId { get; set; }
         public double BasicPay { get; set; }
         public double TaxablePay { get; set; }
         public double IncomeTax { get; set; }
         public double Deductions { get; set; }
         public double NetPay { get; set; }
+        public int CompanyId { get; set; }
+        public string CompanyName { get; set; }
+        public string Department { get; set; }
 
         //Override the string method
         public override string ToString()
         {
-            return $"Employee Details For {EmployeeName} Is Listed Below : \nId : {EmployeeId} \tName : {EmployeeName} \tPhoneNo : {PhoneNumber} \tStartDate : {StartDate} \tGender : {Gender}"+
-                 $"\tAddress : {Address} \nDepartment : {Department} \tBasic Pay : {BasicPay} \tDeductions : {Deductions} \tTaxable Pay : {TaxablePay} \tIncome Tax : {IncomeTax} \tNet Pay : {NetPay}\n";
+            return $"Employee Details For {EmployeeName} Is Listed Below : \nCompany Id : {CompanyId} \tCompany Name : {CompanyName} \tId : {EmployeeId} \tName : {EmployeeName} \tPhoneNo : {PhoneNumber} \tStartDate : {StartDate} \tGender : {Gender}"+
+                 $"\nAddress : {Address} \tDepartment Id : {DepartmentId} \tDepartment Name : {Department} \tBasic Pay : {BasicPay} \tDeductions : {Deductions} \tTaxable Pay : {TaxablePay} \tIncome Tax : {IncomeTax} \tNet Pay : {NetPay}\n";
         }
     }
 }

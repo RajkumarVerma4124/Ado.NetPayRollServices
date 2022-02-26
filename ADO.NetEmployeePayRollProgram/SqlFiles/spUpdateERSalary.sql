@@ -1,7 +1,7 @@
 USE [PayRoll_Service]
 GO
 -- ====================================================================
-------Created Stored Procedure For Updating ER Salary(UC7-UC9)--------
+------Created Stored Procedure For Updating ER Salary(UC7-UC10)--------
 -- ====================================================================
 CREATE PROCEDURE [dbo].[spUpdateERSalary] 
 	@BasicPay float,

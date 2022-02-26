@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace ADO.NetEmployeePayRollProgram
 {
     /// <summary>
-    /// Created The Employee Repository Class To Check The DB Connectivity And Fetch All Records(UC1&UC2)
+    /// Created The Employee Repository Class To Check The DB Connectivity And Fetch & Update Records(UC1&UC2)
     /// </summary>
     public class EmployeeRepository
     {
@@ -159,6 +159,36 @@ namespace ADO.NetEmployeePayRollProgram
             }
         }
 
+        //Method to delete a given field from the db(UC4)
+        public static string DeleteSingleRecord(EmployeeModel model)
+        {
+            int result = 0;
+            try
+            {
+                using (sqlConnection = new SqlConnection(ConnectionString))
+                {
+                    SqlCommand sqlCommand = new SqlCommand("dbo.spDeleteGivenRow", sqlConnection);
+                    sqlCommand.CommandType = CommandType.StoredProcedure;
+                    sqlCommand.Parameters.AddWithValue("@Id", model.EmployeeId);
+                    sqlCommand.Parameters.AddWithValue("@Name", model.EmployeeName);
+                    sqlConnection.Open();
+                    result = sqlCommand.ExecuteNonQuery();
+                    if (result != 0)
+                        return "Data Deleted Succesfully";
+                    else
+                        return "Unsuccessfull";
+                }
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+            finally
+            {
+                sqlConnection.Close();
+            }
+        }
+
         //Method to fetch all records using the given name(UC5)
         public static string GetEmployeesUsingName(EmployeeModel model)
         {
@@ -166,7 +196,7 @@ namespace ADO.NetEmployeePayRollProgram
             {
                 using (sqlConnection = new SqlConnection(ConnectionString))
                 {
-                    SqlCommand command = new SqlCommand("spRetrieveDataBasedOnName", sqlConnection);
+                    SqlCommand command = new SqlCommand("dbo.spRetrieveDataBasedOnName", sqlConnection);
                     //Setting command type to stored procedure
                     command.CommandType = CommandType.StoredProcedure;
                     //Add parameters to stored procedures
@@ -207,7 +237,7 @@ namespace ADO.NetEmployeePayRollProgram
             {
                 using (sqlConnection = new SqlConnection(ConnectionString))
                 {
-                    SqlCommand command = new SqlCommand("spRetrieveDataBasedOnDate", sqlConnection);
+                    SqlCommand command = new SqlCommand("dbo.spRetrieveDataBasedOnDate", sqlConnection);
                     //Setting command type to stored procedure
                     command.CommandType = CommandType.StoredProcedure;
                     //Add parameters to stored procedures
@@ -248,7 +278,7 @@ namespace ADO.NetEmployeePayRollProgram
             {
                 using (sqlConnection = new SqlConnection(ConnectionString))
                 {
-                    SqlCommand command = new SqlCommand("spRetrieveDataBasedOnIncome", sqlConnection);
+                    SqlCommand command = new SqlCommand("dbo.spRetrieveDataBasedOnIncome", sqlConnection);
                     //Setting command type to stored procedure
                     command.CommandType = CommandType.StoredProcedure;
                     //Add parameters to stored procedures
@@ -283,6 +313,7 @@ namespace ADO.NetEmployeePayRollProgram
             }
         }
 
+        //Method to take values from er db using sql data reader to model object(UC4)
         public static void PrintEmpDetails(SqlDataReader reader, EmployeeModel model)
         {
             model.EmployeeId = Convert.ToInt32(reader["Id"] == DBNull.Value ? default : reader["Id"]);
@@ -300,13 +331,14 @@ namespace ADO.NetEmployeePayRollProgram
             Console.WriteLine(model);
         }
 
+        //Method to show the aggregate function values from the database
         public static string AggregateFunctionsByGender(EmployeeModel model, char gender)
         {
             try
             {
                 using (sqlConnection = new SqlConnection(ConnectionString))
                 {
-                    SqlCommand command = new SqlCommand("spForAggregateFunctions", sqlConnection);
+                    SqlCommand command = new SqlCommand("dbo.spForAggregateFunctions", sqlConnection);
                     //Setting command type to stored procedure
                     command.CommandType = CommandType.StoredProcedure;
                     //Add parameters to stored procedures
