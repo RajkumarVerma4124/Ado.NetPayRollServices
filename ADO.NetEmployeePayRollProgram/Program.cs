@@ -17,7 +17,7 @@ namespace ADO.NetEmployeePayRollProgram
             {
                 while (true)
                 {
-                    Console.WriteLine("1: Get All Employee \n2: Get All Employee Using Sql Adapter \n3: Exit");
+                    Console.WriteLine("1: Get All Employee \n2: Get All Employee Using Sql Adapter \n3: Add Employee Details Into DB\n4: Exit");
                     Console.Write("Enter a choice from above : ");
                     bool flag = int.TryParse(Console.ReadLine(), out int choice);
                     if (flag)
@@ -33,6 +33,12 @@ namespace ADO.NetEmployeePayRollProgram
                                 EmployeeRepository.GetAllEmployeesUsingDataAdapter();
                                 break;
                             case 3:
+                                //Creating the object for employee model to add value into db(UC3)
+                                EmployeeModel model = new EmployeeModel();
+                                var empModel = AddEmployeeData.AddData(model);
+                                EmployeeRepository.AddEmployeeIntoDB(empModel);
+                                break;
+                            case 4:
                                 Environment.Exit(0);
                                 break;
                             default:

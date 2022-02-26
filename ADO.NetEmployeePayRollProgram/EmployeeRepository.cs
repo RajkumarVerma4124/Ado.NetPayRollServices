@@ -87,12 +87,48 @@ namespace ADO.NetEmployeePayRollProgram
                     adapter.Fill(dataSet);
                     foreach (DataRow data in dataSet.Tables[0].Rows)
                     {
-                        Console.WriteLine($"Id : {data["id"]} || Name : {data["Name"]} || PhoneNo : {data["PhoneNumber"]} || Address : {data["Address"]}"+
-                            $" || StartDate : {data["StartDate"]} || Gender : {data["Gender"]} || Department : {data["Department"]} || Basic Pay : {data["BasicPay"]}"+
+                        Console.WriteLine($"Id : {data["id"]} || Name : {data["Name"]} || PhoneNo : {data["PhoneNumber"]} || Address : {data["Address"]}" +
+                            $" || StartDate : {data["StartDate"]} || Gender : {data["Gender"]} || Department : {data["Department"]} || Basic Pay : {data["BasicPay"]}" +
                             $" || Deductions : {data["Deductions"]} || Taxable Pay : {data["TaxablePay"]} || Income Tax : {data["IncomeTax"]} || Net Pay : {data["NetPay"]}\n");
                     }
                     Console.ReadLine();
                 }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            finally
+            {
+                sqlConnection.Close();
+            }
+        }
+
+        //Method to add employee details into the database(UC3)
+        public static void AddEmployeeIntoDB(EmployeeModel employee)
+        {
+            try
+            {
+                sqlConnection = new SqlConnection(ConnectionString);
+                SqlCommand sqlCommand = new SqlCommand("dbo.spAddEmployee", sqlConnection);
+                sqlCommand.CommandType = CommandType.StoredProcedure;
+                sqlCommand.Parameters.AddWithValue("@Name", employee.EmployeeName);
+                sqlCommand.Parameters.AddWithValue("@BasicPay", employee.BasicPay);
+                sqlCommand.Parameters.AddWithValue("@StartDate", employee.StartDate);
+                sqlCommand.Parameters.AddWithValue("@Gender", employee.Gender);
+                sqlCommand.Parameters.AddWithValue("@Department", employee.Department);
+                sqlCommand.Parameters.AddWithValue("@PhoneNum", employee.PhoneNumber);
+                sqlCommand.Parameters.AddWithValue("@Address", employee.Address);
+                sqlCommand.Parameters.AddWithValue("@Deductions", employee.Deductions);
+                sqlCommand.Parameters.AddWithValue("@TaxablePay", employee.TaxablePay);
+                sqlCommand.Parameters.AddWithValue("@IncomeTax", employee.IncomeTax);
+                sqlCommand.Parameters.AddWithValue("@NetPay", employee.NetPay);
+                sqlConnection.Open();
+                int result = sqlCommand.ExecuteNonQuery();
+                if (result != 0)
+                    Console.WriteLine("Data Is Added Succesfully");
+                else
+                    Console.WriteLine("Unsuccesfull Operation");
             }
             catch (Exception ex)
             {
