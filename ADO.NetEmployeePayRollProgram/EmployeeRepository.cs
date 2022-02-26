@@ -139,5 +139,36 @@ namespace ADO.NetEmployeePayRollProgram
                 sqlConnection.Close();
             }
         }
+
+        //Method to update employee salary from the db(UC4)
+        public static string UpdateEmpSalary(EmployeeModel model)
+        {
+            int result = 0;
+            try
+            {
+                using (sqlConnection = new SqlConnection(ConnectionString))
+                {
+                    SqlCommand sqlCommand = new SqlCommand("dbo.spUpdateSalary", sqlConnection);
+                    sqlCommand.CommandType = CommandType.StoredProcedure;
+                    sqlCommand.Parameters.AddWithValue("@Id", model.EmployeeId);
+                    sqlCommand.Parameters.AddWithValue("@Name", model.EmployeeName);
+                    sqlCommand.Parameters.AddWithValue("@BasicPay", model.BasicPay);
+                    sqlConnection.Open ();
+                    result = sqlCommand.ExecuteNonQuery();
+                    if (result != 0)
+                        return "Data Updated Succesfully";
+                    else
+                        return "Update Unsuccessfull";
+                }
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+            finally
+            {
+                sqlConnection.Close();
+            }
+        }
     }
 }
