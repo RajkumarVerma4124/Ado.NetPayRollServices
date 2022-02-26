@@ -23,7 +23,7 @@ namespace ADO.NetEmployeePayRollProgram
                 while (true)
                 {
                     Console.WriteLine("1: Get All Employee \n2: Get All Employee Using Sql Adapter \n3: Add Employee Details Into DB \n4: Update Salary Of Employee \n5: Find Employee Using Name"+
-                                    "\n6: Find Employee Using Start Date \n7: Find Employee Using Income Range \n8: Exit");
+                                    "\n6: Find Employee Using Start Date \n7: Find Employee Using Income Range \n8: Aggregate Functions \n9: Exit");
                     Console.Write("Enter a choice from above : ");
                     bool flag = int.TryParse(Console.ReadLine(), out int choice);
                     if (flag)
@@ -75,6 +75,12 @@ namespace ADO.NetEmployeePayRollProgram
                                 Console.WriteLine(result);
                                 break;
                             case 8:
+                                Console.Write("Enter The Gender Of The Employee : ");
+                                char gender  = Convert.ToChar(Console.ReadLine());                                
+                                result = EmployeeRepository.AggregateFunctionsByGender(model, gender);
+                                Console.WriteLine(result);
+                                break;
+                            case 9:
                                 Environment.Exit(0);
                                 break;
                             default:

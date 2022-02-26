@@ -55,5 +55,17 @@ namespace ADo.NetEmpPayRollTesting
             string actual = EmployeeRepository.GetEmployeesUsingIncomeRange(employeeModel, startRangeInc, endRangeInc);
             Assert.AreEqual(actual, expected);
         }
+
+        //Testing the aggregate method to check if data is recieved or not(UC6-TC6.1)
+        [TestMethod]
+        [DataRow('M', "Found The Data Successfully")]
+        [DataRow('F', "Found The Data Successfully")]
+        [DataRow('A', "No Records Found")]
+        public void GivenSPReturnAggregateFunctionsResult(char gender, string expected)
+        {
+            EmployeeModel employeeModel = new EmployeeModel();
+            string actual = EmployeeRepository.AggregateFunctionsByGender(employeeModel,gender);
+            Assert.AreEqual(actual, expected);
+        }
     }
 }

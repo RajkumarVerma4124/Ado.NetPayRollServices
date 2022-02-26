@@ -299,5 +299,46 @@ namespace ADO.NetEmployeePayRollProgram
             model.NetPay = Convert.ToDouble(reader["NetPay"] == DBNull.Value ? default : reader["NetPay"]);
             Console.WriteLine(model);
         }
+
+        public static string AggregateFunctionsByGender(EmployeeModel model, char gender)
+        {
+            try
+            {
+                using (sqlConnection = new SqlConnection(ConnectionString))
+                {
+                    SqlCommand command = new SqlCommand("spForAggregateFunctions", sqlConnection);
+                    //Setting command type to stored procedure
+                    command.CommandType = CommandType.StoredProcedure;
+                    //Add parameters to stored procedures
+                    command.Parameters.AddWithValue("@Gender", gender);
+                    //Open the connection
+                    sqlConnection.Open();
+                    //Sql data reader- using execute reader returns object for resultset
+                    SqlDataReader result = command.ExecuteReader();
+                    //checking result set has rows are not
+                    if (result.HasRows)
+                    {
+                        while (result.Read())
+                        {
+                            Console.WriteLine($"Total Salary : {result[0]} \nMaximum Salary : {result[1]} \nMinimum Salary : {result[2]} \nAverage Salary = {result[3]}"+
+                                $"\nGender : {result[4]} \nCount : {result[5]}");
+                        }
+                        return "Found The Data Successfully";
+                    }
+                    else
+                    {
+                        return "No Records Found";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+            finally
+            {
+                sqlConnection.Close();
+            }
+        }
     }
 }
