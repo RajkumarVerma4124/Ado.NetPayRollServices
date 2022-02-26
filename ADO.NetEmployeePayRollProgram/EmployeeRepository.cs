@@ -39,19 +39,7 @@ namespace ADO.NetEmployeePayRollProgram
                         //Will Loop until rows are null
                         while (reader.Read())
                         {
-                            model.EmployeeId = Convert.ToInt32(reader["Id"] == DBNull.Value ? default : reader["Id"]);
-                            model.EmployeeName = reader["Name"] == DBNull.Value ? default : reader["Name"].ToString();
-                            model.PhoneNumber = Convert.ToInt64(reader["PhoneNumber"] == DBNull.Value ? default : reader["PhoneNumber"]);
-                            model.StartDate = (DateTime)(reader["StartDate"] == DBNull.Value ? default(DateTime) : reader["StartDate"]);
-                            model.Gender = Convert.ToChar(reader["Gender"] == DBNull.Value ? default : reader["Gender"]);
-                            model.Address = reader["Address"] == DBNull.Value ? default : reader["Address"].ToString();
-                            model.Department = reader["Department"] == DBNull.Value ? default : reader["Department"].ToString();
-                            model.BasicPay = Convert.ToDouble(reader["BasicPay"] == DBNull.Value ? default : reader["BasicPay"]);
-                            model.TaxablePay = Convert.ToDouble(reader["TaxablePay"] == DBNull.Value ? default : reader["TaxablePay"]);
-                            model.IncomeTax = Convert.ToDouble(reader["IncomeTax"] == DBNull.Value ? default : reader["IncomeTax"]);
-                            model.Deductions = Convert.ToDouble(reader["Deductions"] == DBNull.Value ? default : reader["Deductions"]);
-                            model.NetPay = Convert.ToDouble(reader["NetPay"] == DBNull.Value ? default : reader["NetPay"]);
-                            Console.WriteLine(model);
+                            PrintEmpDetails(reader, model);
                         }
                     }
                     else
@@ -169,6 +157,147 @@ namespace ADO.NetEmployeePayRollProgram
             {
                 sqlConnection.Close();
             }
+        }
+
+        //Method to fetch all records using the given name(UC5)
+        public static string GetEmployeesUsingName(EmployeeModel model)
+        {
+            try
+            {
+                using (sqlConnection = new SqlConnection(ConnectionString))
+                {
+                    SqlCommand command = new SqlCommand("spRetrieveDataBasedOnName", sqlConnection);
+                    //Setting command type to stored procedure
+                    command.CommandType = CommandType.StoredProcedure;
+                    //Add parameters to stored procedures
+                    command.Parameters.AddWithValue("@Name", model.EmployeeName);
+                    //Open the connection
+                    sqlConnection.Open();
+                    //Sql data reader- using execute reader returns object for resultset
+                    SqlDataReader result = command.ExecuteReader();
+                    //checking result set has rows are not
+                    if (result.HasRows)
+                    {
+                        while (result.Read())
+                        {
+                            PrintEmpDetails(result, model);
+                        }
+                        return "Found The Data With Given Name";
+                    }
+                    else
+                    {
+                        return "No Records Founds";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+            finally
+            {
+                sqlConnection.Close();
+            }
+        }
+
+        //Method to fetch all records using the given date(UC5)
+        public static string GetEmployeesUsingDateRange(EmployeeModel model)
+        {
+            try
+            {
+                using (sqlConnection = new SqlConnection(ConnectionString))
+                {
+                    SqlCommand command = new SqlCommand("spRetrieveDataBasedOnDate", sqlConnection);
+                    //Setting command type to stored procedure
+                    command.CommandType = CommandType.StoredProcedure;
+                    //Add parameters to stored procedures
+                    command.Parameters.AddWithValue("@StartDate", model.StartDate);
+                    //Open the connection
+                    sqlConnection.Open();
+                    //Sql data reader- using execute reader returns object for resultset
+                    SqlDataReader result = command.ExecuteReader();
+                    //checking result set has rows are not
+                    if (result.HasRows)
+                    {
+                        while (result.Read())
+                        {
+                            PrintEmpDetails(result, model);
+                        }
+                        return "Found The Data With Given Date";
+                    }
+                    else
+                    {
+                        return "No Records Found";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+            finally
+            {
+                sqlConnection.Close();
+            }
+        }
+
+        //Method to fetch all records using the given income(UC5)
+        public static string GetEmployeesUsingIncomeRange(EmployeeModel model, double startIncome, double endIncome)
+        {
+            try
+            {
+                using (sqlConnection = new SqlConnection(ConnectionString))
+                {
+                    SqlCommand command = new SqlCommand("spRetrieveDataBasedOnIncome", sqlConnection);
+                    //Setting command type to stored procedure
+                    command.CommandType = CommandType.StoredProcedure;
+                    //Add parameters to stored procedures
+                    command.Parameters.AddWithValue("@BasicPayStart", startIncome);
+                    command.Parameters.AddWithValue("@BasicPayEnd", endIncome);
+                    //Open the connection
+                    sqlConnection.Open();
+                    //Sql data reader- using execute reader returns object for resultset
+                    SqlDataReader result = command.ExecuteReader();
+                    //checking result set has rows are not
+                    if (result.HasRows)
+                    {
+                        while (result.Read())
+                        {
+                            PrintEmpDetails(result, model);
+                        }
+                        return "Found The Data With Given Income Range";
+                    }
+                    else
+                    {
+                        return "No Records Found";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+            finally
+            {
+                sqlConnection.Close();
+            }
+        }
+
+        public static void PrintEmpDetails(SqlDataReader reader, EmployeeModel model)
+        {
+            model.EmployeeId = Convert.ToInt32(reader["Id"] == DBNull.Value ? default : reader["Id"]);
+            model.EmployeeName = reader["Name"] == DBNull.Value ? default : reader["Name"].ToString();
+            model.PhoneNumber = Convert.ToInt64(reader["PhoneNumber"] == DBNull.Value ? default : reader["PhoneNumber"]);
+            model.StartDate = (DateTime)(reader["StartDate"] == DBNull.Value ? default(DateTime) : reader["StartDate"]);
+            model.Gender = Convert.ToChar(reader["Gender"] == DBNull.Value ? default : reader["Gender"]);
+            model.Address = reader["Address"] == DBNull.Value ? default : reader["Address"].ToString();
+            model.Department = reader["Department"] == DBNull.Value ? default : reader["Department"].ToString();
+            model.BasicPay = Convert.ToDouble(reader["BasicPay"] == DBNull.Value ? default : reader["BasicPay"]);
+            model.TaxablePay = Convert.ToDouble(reader["TaxablePay"] == DBNull.Value ? default : reader["TaxablePay"]);
+            model.IncomeTax = Convert.ToDouble(reader["IncomeTax"] == DBNull.Value ? default : reader["IncomeTax"]);
+            model.Deductions = Convert.ToDouble(reader["Deductions"] == DBNull.Value ? default : reader["Deductions"]);
+            model.NetPay = Convert.ToDouble(reader["NetPay"] == DBNull.Value ? default : reader["NetPay"]);
+            Console.WriteLine(model);
         }
     }
 }

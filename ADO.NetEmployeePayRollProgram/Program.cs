@@ -8,6 +8,9 @@ namespace ADO.NetEmployeePayRollProgram
 {
     public class Program
     {
+        //Creating a static variable
+        public static string result;
+
         //Entry of the main program
         public static void Main(string[] args)
         {
@@ -15,12 +18,12 @@ namespace ADO.NetEmployeePayRollProgram
             Console.WriteLine("Welcome TO The ADO.Net Employee Payroll Sercive Program");
             //Creating the object for employee model
             EmployeeModel model = new EmployeeModel();
-
             try
             {
                 while (true)
                 {
-                    Console.WriteLine("1: Get All Employee \n2: Get All Employee Using Sql Adapter \n3: Add Employee Details Into DB \n4: Update Salary Of Employee \n5: Exit");
+                    Console.WriteLine("1: Get All Employee \n2: Get All Employee Using Sql Adapter \n3: Add Employee Details Into DB \n4: Update Salary Of Employee \n5: Find Employee Using Name"+
+                                    "\n6: Find Employee Using Start Date \n7: Find Employee Using Income Range \n8: Exit");
                     Console.Write("Enter a choice from above : ");
                     bool flag = int.TryParse(Console.ReadLine(), out int choice);
                     if (flag)
@@ -48,10 +51,30 @@ namespace ADO.NetEmployeePayRollProgram
                                 model.EmployeeName = Console.ReadLine();
                                 Console.Write("Enter The Updated Salary Of The Employee : ");
                                 model.BasicPay = Convert.ToDouble(Console.ReadLine());
-                                var result = EmployeeRepository.UpdateEmpSalary(model);
+                                result = EmployeeRepository.UpdateEmpSalary(model);
                                 Console.WriteLine(result);
                                 break;
                             case 5:
+                                Console.Write("Enter The Name Of The Employee : ");
+                                model.EmployeeName = Console.ReadLine();
+                                result = EmployeeRepository.GetEmployeesUsingName(model);
+                                Console.WriteLine(result);
+                                break;
+                            case 6:
+                                Console.Write("Enter The Starting Date Of Joining For Employee In yyyy-mm-dd Format: ");
+                                model.StartDate = Convert.ToDateTime(Console.ReadLine());
+                                result = EmployeeRepository.GetEmployeesUsingDateRange(model);
+                                Console.WriteLine(result);
+                                break;
+                            case 7:
+                                Console.Write("Enter The Start Range Salary Of The Employee : ");
+                                double startIncome = Convert.ToDouble(Console.ReadLine());
+                                Console.Write("Enter The End Range Salary Of The Employee : ");
+                                double endIncome = Convert.ToDouble(Console.ReadLine());
+                                result = EmployeeRepository.GetEmployeesUsingIncomeRange(model, startIncome, endIncome);
+                                Console.WriteLine(result);
+                                break;
+                            case 8:
                                 Environment.Exit(0);
                                 break;
                             default:

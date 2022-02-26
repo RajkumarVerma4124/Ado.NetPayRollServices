@@ -18,7 +18,7 @@ namespace ADO.NetEmployeePayRollProgram
             employee.EmployeeName = Console.ReadLine();
             Console.Write("Enter The Salary Of The Employee : ");
             employee.BasicPay = Convert.ToDouble(Console.ReadLine());
-            Console.Write("Enter The Starting Date Of Joining For Employee In yyyy/mm/dd Format: ");
+            Console.Write("Enter The Starting Date Of Joining For Employee In yyyy-mm-dd Format: ");
             employee.StartDate = Convert.ToDateTime(Console.ReadLine());
             Console.Write("Enter The Gender Of The Employee : ");
             employee.Gender = Convert.ToChar(Console.ReadLine());
