@@ -70,5 +70,38 @@ namespace ADO.NetEmployeePayRollProgram
                 sqlConnection.Close();
             }
         }
+
+        //Method to fetch all records using sqlDataAdapter(UC2)
+        public static void GetAllEmployeesUsingDataAdapter()
+        {
+            try
+            {
+                using (sqlConnection = new SqlConnection(ConnectionString))
+                {
+                    //Created the object of dataset class
+                    DataSet dataSet = new DataSet();
+                    //Using Stored procedure query to retreive data
+                    SqlDataAdapter adapter = new SqlDataAdapter("dbo.ViewAllEmployee", sqlConnection);
+                    //Open Sql Connection
+                    sqlConnection.Open();
+                    adapter.Fill(dataSet);
+                    foreach (DataRow data in dataSet.Tables[0].Rows)
+                    {
+                        Console.WriteLine($"Id : {data["id"]} || Name : {data["Name"]} || PhoneNo : {data["PhoneNumber"]} || Address : {data["Address"]}"+
+                            $" || StartDate : {data["StartDate"]} || Gender : {data["Gender"]} || Department : {data["Department"]} || Basic Pay : {data["BasicPay"]}"+
+                            $" || Deductions : {data["Deductions"]} || Taxable Pay : {data["TaxablePay"]} || Income Tax : {data["IncomeTax"]} || Net Pay : {data["NetPay"]}\n");
+                    }
+                    Console.ReadLine();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            finally
+            {
+                sqlConnection.Close();
+            }
+        }
     }
 }
