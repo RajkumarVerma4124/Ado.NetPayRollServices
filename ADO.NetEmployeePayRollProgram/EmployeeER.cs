@@ -23,7 +23,7 @@ namespace ADO.NetEmployeePayRollProgram
                 while (true)
                 {
                     Console.WriteLine("1: Get All Employee \n2: Update Salary Of Employee \n3: Find Employee Using Name \n4: Find Employee Using Start Date"+
-                                      "\n5: Find Employee Using Income Range \n6: Aggregate Functions  \n7: Go Back");
+                                      "\n5: Find Employee Using Income Range \n6: Aggregate Functions  \n7: Add Data Into Multiple Tables \n8: Go Back");
                     Console.Write("Enter a choice from above : ");
                     bool flag = int.TryParse(Console.ReadLine(), out int choice);
                     if (flag)
@@ -76,6 +76,31 @@ namespace ADO.NetEmployeePayRollProgram
                                 Console.WriteLine(result);
                                 break;
                             case 7:
+                                //Inserting the data into multiple table using transaction(UC10)
+                                Console.Write("Enter The Company Id From 1 To 3 : ");
+                                model.CompanyId = Convert.ToInt32(Console.ReadLine());
+                                Console.Write("Enter The Name Of The Employee : ");
+                                model.EmployeeName = Console.ReadLine();
+                                Console.Write("Enter The Starting Date Of Joining For Employee In yyyy-mm-dd Format: ");
+                                model.StartDate = Convert.ToDateTime(Console.ReadLine());
+                                Console.Write("Enter The Gender Of The Employee : ");
+                                model.Gender = Convert.ToChar(Console.ReadLine());
+                                Console.Write("Enter The Phone Number Of The Employee : ");
+                                model.PhoneNumber = Convert.ToInt64(Console.ReadLine());
+                                Console.Write("Enter The Address Of The Employee : ");
+                                model.Address = Console.ReadLine();
+                                Console.Write("Enter The Salary Of The Employee : ");
+                                model.BasicPay = Convert.ToDouble(Console.ReadLine());
+                                Console.Write("Enter The Deduction Amount Of The Employee : ");
+                                model.Deductions = Convert.ToDouble(Console.ReadLine());
+                                model.TaxablePay = model.BasicPay - model.Deductions;
+                                Console.Write("Enter The IncomeTax Amount Of The Employee : ");
+                                model.IncomeTax = Convert.ToDouble(Console.ReadLine());
+                                model.NetPay = model.TaxablePay - model.IncomeTax;
+                                result = PayRollTransactions.InsertDataIntoMulTableUsingTransaction(model);
+                                Console.WriteLine(result);
+                                break;
+                            case 8:
                                 //For going back to the main menu
                                 Program.Main(null);
                                 break;

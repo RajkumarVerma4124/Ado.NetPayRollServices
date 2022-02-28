@@ -48,6 +48,7 @@
     <Compile Include="EmployeeERRepository.cs" />
     <Compile Include="EmployeeModel.cs" />
     <Compile Include="EmployeeRepository.cs" />
+    <Compile Include="PayRollTransactions.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

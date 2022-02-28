@@ -102,5 +102,26 @@ namespace ADo.NetEmpPayRollTesting
             Assert.AreEqual(actualEmployee, expected);
             Assert.AreEqual(actualErEmployee, expected);
         }
+
+        //Testing the insertdataintomul tables method to check if it is added successfully or not(UC10-TC10.1)
+        [TestMethod]
+        [DataRow(2,"Yash", "2020-10-21", 'M', 9658740123, "Govandi", 43500, 999.99, 4999.99, "Inserted The Data Successfully")]
+        public void GivenSPReturnAdddedResult(int companyId, string name, string date, char gender, long phoneNum, string addr, double basicPay, double dedcution, double incTax, string expected)
+        {
+            EmployeeModel employeeModel = new EmployeeModel();
+            employeeModel.CompanyId = companyId;
+            employeeModel.EmployeeName = name;
+            employeeModel.StartDate = Convert.ToDateTime(date);
+            employeeModel.Gender = gender;
+            employeeModel.PhoneNumber = phoneNum;
+            employeeModel.Address = addr;
+            employeeModel.BasicPay = basicPay;
+            employeeModel.Deductions = dedcution;
+            employeeModel.TaxablePay = employeeModel.BasicPay - employeeModel.Deductions;
+            employeeModel.IncomeTax = incTax;
+            employeeModel.NetPay = employeeModel.TaxablePay - employeeModel.IncomeTax;
+            string actual = PayRollTransactions.InsertDataIntoMulTableUsingTransaction(employeeModel);
+            Assert.AreEqual(actual, expected);
+        }
     }
 }
