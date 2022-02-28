@@ -10,6 +10,7 @@ namespace ADO.NetEmployeePayRollProgram
     {
         //Creating a static variable
         public static string result;
+        public static int count = 0;
 
         //Entry of the main program
         public static void EntityRelationEmployee()
@@ -23,7 +24,8 @@ namespace ADO.NetEmployeePayRollProgram
                 while (true)
                 {
                     Console.WriteLine("1: Get All Employee \n2: Update Salary Of Employee \n3: Find Employee Using Name \n4: Find Employee Using Start Date"+
-                                      "\n5: Find Employee Using Income Range \n6: Aggregate Functions \n7: Add Data Into Multiple Tables \n8: Cascade delete \n9: Go Back");
+                                      "\n5: Find Employee Using Income Range \n6: Aggregate Functions \n7: Add Data Into Multiple Tables \n8: Cascade delete"+
+                                      "\n9: Add IsActive Coulumn \n10: AuditList \n11: Find Employee Using Checking IsActive State \n12: Go Back");
                     Console.Write("Enter a choice from above : ");
                     bool flag = int.TryParse(Console.ReadLine(), out int choice);
                     if (flag)
@@ -101,7 +103,7 @@ namespace ADO.NetEmployeePayRollProgram
                                 Console.WriteLine(result);
                                 break;
                             case 8:
-                                //Deleting the data from multiple table using casacade(UC10)
+                                //Deleting the data from multiple table using casacade(UC11)
                                 Console.Write("Enter The Id Of The Employee : ");
                                 model.EmployeeId = Convert.ToInt32(Console.ReadLine());
                                 Console.Write("Enter The Name Of The Employee : ");
@@ -110,6 +112,29 @@ namespace ADO.NetEmployeePayRollProgram
                                 Console.WriteLine(result);
                                 break;
                             case 9:
+                                //Adding a coulumn into the employee table(UC12)
+                                if(count == 0)
+                                {
+                                    result = PayRollTransactions.AddIsActiveColumn();
+                                    Console.WriteLine(result);
+                                    count++;
+                                }                              
+                                break;
+                            case 10:
+                                //AuditList(UC12)
+                                Console.Write("Enter The Id Of The Employee : ");
+                                model.EmployeeId = Convert.ToInt32(Console.ReadLine());
+                                result = PayRollTransactions.AuditList(model);
+                                Console.WriteLine(result);
+                                break;
+                            case 11:
+                                //Method to get all employee by checking isactive state(UC12)
+                                Console.Write("Enter The IsActive State Of The Employee (True/False): ");
+                                model.IsActive = Console.ReadLine();
+                                result = EmployeeERRepository.GetEREmployeesByCheckingIsActive(model);
+                                Console.WriteLine(result);
+                                break;
+                            case 12:
                                 //For going back to the main menu
                                 Program.Main(null);
                                 break;

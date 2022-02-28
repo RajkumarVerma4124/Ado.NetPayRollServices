@@ -24,6 +24,8 @@ namespace ADO.NetEmployeePayRollProgram
         public int CompanyId { get; set; }
         public string CompanyName { get; set; }
         public string Department { get; set; }
+        public string IsActive { get; set; }
+
 
         //Override the string method
         public override string ToString()

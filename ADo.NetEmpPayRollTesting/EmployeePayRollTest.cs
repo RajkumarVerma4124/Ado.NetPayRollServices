@@ -126,14 +126,26 @@ namespace ADo.NetEmpPayRollTesting
 
         //Testing the delete data from mul tables method to check if it is deleted successfully or not(UC11-TC11.1)
         [TestMethod]
-        [DataRow(21, "Yash", "Deleted The Data Successfully")]
-        [DataRow(21, "Yash", "Unsucesfull")]
+        [DataRow(24, "Yash", "Deleted The Data Successfully")]
+        [DataRow(24, "Yash", "Unsucesfull")]
         public void GivenSPReturnCascadeDeletedResult(int employeeId, string name, string expected)
         {
             EmployeeModel employeeModel = new EmployeeModel();
             employeeModel.EmployeeId = employeeId;
             employeeModel.EmployeeName = name;
             string actual = PayRollTransactions.DeleteDataFromMulTableUsingCascade(employeeModel);
+            Assert.AreEqual(actual, expected);
+        }
+
+        //Testing the auditlist method to check if it is updated successfully or not(UC11-TC11.1)
+        [TestMethod]
+        [DataRow(25, "Delete And Update Operation performed successfully")]
+        [DataRow(25, "Unsucessfull")]
+        public void GivenSPReturnAuditListResult(int employeeId, string expected)
+        {
+            EmployeeModel employeeModel = new EmployeeModel();
+            employeeModel.EmployeeId = employeeId;
+            string actual = PayRollTransactions.AuditList(employeeModel);
             Assert.AreEqual(actual, expected);
         }
     }

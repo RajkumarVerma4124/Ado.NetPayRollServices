@@ -138,5 +138,99 @@ namespace ADO.NetEmployeePayRollProgram
                 }
             }
         }
+
+        //Method to add a column in the employee table(UC12)
+        public static string AddIsActiveColumn()
+        {
+            using (sqlConnection = new SqlConnection(ConnectionString))
+            {
+                sqlConnection.Open();
+                //Begins sql transaction
+                SqlTransaction sqlTransaction = sqlConnection.BeginTransaction();
+                SqlCommand sqlCommand = sqlConnection.CreateCommand();
+                sqlCommand.Transaction = sqlTransaction;
+                try
+                {
+                    //Add column IsActive in Employee
+                    string query = $"Alter table Employee add IsActive varchar(10) NOT NULL default 'True';";
+                    sqlCommand = new SqlCommand(query, sqlConnection);
+                    sqlCommand.Transaction = sqlTransaction;
+                    var result = sqlCommand.ExecuteNonQuery();
+                    if(result != 0)
+                    {
+                        sqlTransaction.Commit();
+                        return "Added the coulumn successfully";
+                    }
+                    else
+                    {
+                        return "Unsuccessfull";
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    try
+                    {
+                        //Rollback to the point before exception
+                        sqlTransaction.Rollback();
+                    }
+                    catch(Exception exRollBack)
+                    {
+                        return exRollBack.Message;
+                    }
+                }
+            }
+            return default;
+        }
+
+        //Method to create audit list(UC12)
+        public static string AuditList(EmployeeModel model)
+        {
+            using (sqlConnection = new SqlConnection(ConnectionString))
+            {
+                sqlConnection.Open();
+                //Begins sql transaction
+                SqlTransaction sqlTransaction = sqlConnection.BeginTransaction();
+                SqlCommand command = sqlConnection.CreateCommand();
+                command.Transaction = sqlTransaction;
+                try
+                {
+                    //Deleting payroll table employee
+                    string delQuery = $"DELETE FROM Payroll WHERE EmployeeId='{model.EmployeeId}'";
+                    command = new SqlCommand(delQuery, sqlConnection);
+                    command.Transaction = sqlTransaction;
+                    var result = command.ExecuteNonQuery();
+
+                    //Setting The IsActive = False after deleting the employee payroll object
+                    string udQuery = $"UPDATE Employee SET IsActive = 'False' WHERE EmployeeId={model.EmployeeId};";
+                    command = new SqlCommand(udQuery, sqlConnection);
+                    command.Transaction = sqlTransaction;
+                    var newResult = command.ExecuteNonQuery();
+                    if (newResult !=0 && result != 0 )
+                    {
+                        sqlTransaction.Commit();
+                        return "Delete And Update Operation performed successfully";
+                    }
+                    else
+                    {
+                        return "Unsucessfull";
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    try
+                    {
+                        //Rollback to the point before exception
+                        sqlTransaction.Rollback();
+                    }
+                    catch (Exception exRollBack)
+                    {
+                        return exRollBack.Message;
+                    }
+                }
+            }
+            return default;
+        }
     }
 }

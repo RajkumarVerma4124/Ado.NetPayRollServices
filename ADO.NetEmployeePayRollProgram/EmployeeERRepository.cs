@@ -116,8 +116,9 @@ namespace ADO.NetEmployeePayRollProgram
             model.PhoneNumber = Convert.ToInt64(reader["PhoneNumber"] == DBNull.Value ? default : reader["PhoneNumber"]);
             model.StartDate = (DateTime)(reader["StartDate"] == DBNull.Value ? default(DateTime) : reader["StartDate"]);
             model.Gender = Convert.ToChar(reader["Gender"] == DBNull.Value ? default : reader["Gender"]);
+            model.IsActive = reader["IsActive"] == DBNull.Value ? default : reader["IsActive"].ToString();
             Console.WriteLine($"Employee Details For {model.EmployeeName} Is Listed Below : \nCompany Id : {model.CompanyId} \tCompany Name : {model.CompanyName} \tId : {model.EmployeeId}" +
-                $" \tName : {model.EmployeeName} \tPhoneNo : {model.PhoneNumber} \tStartDate : {model.StartDate} \tGender : {model.Gender}");
+                $" \tName : {model.EmployeeName} \tPhoneNo : {model.PhoneNumber} \tStartDate : {model.StartDate} \tGender : {model.Gender} \tIsActive : {model.IsActive}");
         }
 
         //Method to fetch all records from er employee db using the given name(UC7ToUC9)
@@ -144,6 +145,45 @@ namespace ADO.NetEmployeePayRollProgram
                             PrintErEmpDetails(reader, model);
                         }
                         return "Found The Data With Given Name";
+                    }
+                    else
+                        return "No Records Founds";
+                }
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+            finally
+            {
+                sqlConnection.Close();
+            }
+        }
+
+        //Method to fetch all records from er employee db by checking is active(UC12)
+        public static string GetEREmployeesByCheckingIsActive(EmployeeModel model)
+        {
+            try
+            {
+                using (sqlConnection = new SqlConnection(ConnectionString))
+                {
+                    SqlCommand command = new SqlCommand("dbo.spGetEREmpByCheckingActive", sqlConnection);
+                    //Setting command type to stored procedure
+                    command.CommandType = CommandType.StoredProcedure;
+                    //Add parameters to stored procedures
+                    command.Parameters.AddWithValue("@IsActive", model.IsActive);
+                    //Open the connection
+                    sqlConnection.Open();
+                    //Sql data reader- using execute reader returns object for resultset
+                    SqlDataReader reader = command.ExecuteReader();
+                    //checking result set has rows are not
+                    if (reader.HasRows)
+                    {
+                        while (reader.Read())
+                        {
+                            PrintErEmpDetails(reader, model);
+                        }
+                        return "Found The Data";
                     }
                     else
                         return "No Records Founds";
