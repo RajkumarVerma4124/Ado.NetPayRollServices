@@ -37,7 +37,7 @@ namespace ADo.NetEmpPayRollTesting
 
         //Testing the Delete method of employee to check if its delted successfully or not(UC4-TC4.2)
         [TestMethod]
-        [DataRow(10, "Sachin", "Data Deleted Succesfully")]
+        //[DataRow(10, "Sachin", "Data Deleted Succesfully")]
         [DataRow(14, "Kumar", "Unsuccessfull")]
         public void GivenSPReturnDeletedResult(int id, string name, string expected)
         {
@@ -103,7 +103,7 @@ namespace ADo.NetEmpPayRollTesting
             Assert.AreEqual(actualErEmployee, expected);
         }
 
-        //Testing the insertdataintomul tables method to check if it is added successfully or not(UC10-TC10.1)
+        //Testing the insert data into mul tables method to check if it is added successfully or not(UC10-TC10.1)
         [TestMethod]
         [DataRow(2,"Yash", "2020-10-21", 'M', 9658740123, "Govandi", 43500, 999.99, 4999.99, "Inserted The Data Successfully")]
         public void GivenSPReturnAdddedResult(int companyId, string name, string date, char gender, long phoneNum, string addr, double basicPay, double dedcution, double incTax, string expected)
@@ -121,6 +121,19 @@ namespace ADo.NetEmpPayRollTesting
             employeeModel.IncomeTax = incTax;
             employeeModel.NetPay = employeeModel.TaxablePay - employeeModel.IncomeTax;
             string actual = PayRollTransactions.InsertDataIntoMulTableUsingTransaction(employeeModel);
+            Assert.AreEqual(actual, expected);
+        }
+
+        //Testing the delete data from mul tables method to check if it is deleted successfully or not(UC11-TC11.1)
+        [TestMethod]
+        [DataRow(21, "Yash", "Deleted The Data Successfully")]
+        [DataRow(21, "Yash", "Unsucesfull")]
+        public void GivenSPReturnCascadeDeletedResult(int employeeId, string name, string expected)
+        {
+            EmployeeModel employeeModel = new EmployeeModel();
+            employeeModel.EmployeeId = employeeId;
+            employeeModel.EmployeeName = name;
+            string actual = PayRollTransactions.DeleteDataFromMulTableUsingCascade(employeeModel);
             Assert.AreEqual(actual, expected);
         }
     }

@@ -33,7 +33,7 @@ namespace ADO.NetEmployeePayRollProgram
                 command.Transaction = sqlTransaction;
                 try
                 {
-                    //Wxecuting different commands objects
+                    //Executing different commands objects
                     command = new SqlCommand("dbo.spInsertDataIntoEmployee", sqlConnection);
                     command.CommandType = CommandType.StoredProcedure; 
                     command.Parameters.AddWithValue("@CompanyId", model.CompanyId);
@@ -62,6 +62,61 @@ namespace ADO.NetEmployeePayRollProgram
                         //if all executes are success commit the transaction
                         sqlTransaction.Commit();
                         return $"Inserted The Data Successfully";
+                    }
+                    else
+                        return $"Unsucesfull";
+                }
+                catch (Exception ex)
+                {
+                    //Handle the eception if the transaction fails to commit
+                    Console.WriteLine(ex.Message);
+                    try
+                    {
+                        //Attempt to rollback the transaction
+                        sqlTransaction.Rollback();
+                    }
+                    catch (Exception exRollBack)
+                    {
+                        return exRollBack.Message;
+                    }
+                    return default;
+                }
+            }
+        }
+
+        //Method to delte data from multiple tables(UC11)
+        public static string DeleteDataFromMulTableUsingCascade(EmployeeModel model)
+        {
+            using (sqlConnection = new SqlConnection(ConnectionString))
+            {
+                //Open the connection
+                sqlConnection.Open();
+                //Start a local transactions
+                SqlTransaction sqlTransaction = sqlConnection.BeginTransaction();
+                //Enlist a command int the current transaction
+                SqlCommand command = sqlConnection.CreateCommand();
+                //Setting the command to transaction
+                command.Transaction = sqlTransaction;
+                try
+                {
+                    //Executing different commands objects
+                    command = new SqlCommand("dbo.spDeleteDataFromEmployee", sqlConnection);
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@EmployeeId", model.EmployeeId);
+                    command.Parameters.AddWithValue("@EmployeeName", model.EmployeeName);
+                    command.Transaction = sqlTransaction;
+                    var result = command.ExecuteNonQuery();
+
+                    //Deleting payroll table
+                    string query = $"DELETE FROM Payroll WHERE EmployeeId='{model.EmployeeId}'";
+                    command = new SqlCommand(query, sqlConnection);
+                    command.Transaction = sqlTransaction;
+                    var newResult = command.ExecuteNonQuery();
+                    if (newResult != 0 && result != 0)
+                    {
+                        //if all executes are success commit the transaction
+                        sqlTransaction.Commit();
+                        return $"Deleted The Data Successfully";
                     }
                     else
                         return $"Unsucesfull";
