@@ -247,13 +247,13 @@ namespace ADO.NetEmployeePayRollProgram
                     Stopwatch stopWatch = new Stopwatch();
                     //start the stopwatch
                     stopWatch.Start();
-                    Console.WriteLine("Employee Being Added" + employeeData.EmployeeName);
+                    Console.WriteLine("Employee Being Added : " + employeeData.EmployeeName);
                     InsertDataIntoMulTableUsingTransaction(employeeData);
-                    Console.WriteLine("Employee Added Into Db" + employeeData.EmployeeName);
+                    Console.WriteLine("Employee Added Into Db : " + employeeData.EmployeeName);
                     //stop stopwatch
                     stopWatch.Stop();
                     double elapsedTime = Math.Round((double)stopWatch.ElapsedMilliseconds / 1000, 2);
-                    Console.WriteLine($"Duration Without Thread : {elapsedTime} milliseconds");
+                    Console.WriteLine($"Duration Without Thread For {employeeData.EmployeeName} : {elapsedTime} milliseconds");
                 });
                 return $"Successfull";
             }
@@ -261,6 +261,37 @@ namespace ADO.NetEmployeePayRollProgram
             {
                 return ex.Message;
             }         
+        }
+
+        //Method to add mul employee into db table using thread(UC14)
+        public static string AddMulEmployeeToPayrollUsingThread(List<EmployeeModel> employeePayroll)
+        {
+            //object for stopwatch
+            Stopwatch stopWatch = new Stopwatch();
+            try
+            {
+                employeePayroll.ForEach(employeeData =>
+                {     
+                    Task thread = Task.Run(() =>
+                    {
+                        //start the stopwatch
+                        stopWatch.Start();
+                        Console.WriteLine("Employee Being Added : " + employeeData.EmployeeName);
+                        InsertDataIntoMulTableUsingTransaction(employeeData);
+                        Console.WriteLine("Employee Added Into Db : " + employeeData.EmployeeName);
+                        //stop stopwatch
+                        stopWatch.Stop();
+                        double elapsedTime = Math.Round((double)stopWatch.ElapsedMilliseconds / 1000, 2);
+                        Console.WriteLine($"Duration With Thread For {employeeData.EmployeeName} : {elapsedTime} milliseconds");
+                    });
+                    thread.Wait();             
+                });
+                return $"Successfull";
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
         }
     }
 }
