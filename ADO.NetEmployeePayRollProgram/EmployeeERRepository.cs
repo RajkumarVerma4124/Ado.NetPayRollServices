@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ADO.NetEmployeePayRollProgram
@@ -128,52 +130,79 @@ namespace ADO.NetEmployeePayRollProgram
         //Method to take values from db using sql data reader to model object(UC7ToUC9)
         public static void PrintEmpDetails(SqlDataReader reader, EmployeeModel model)
         {
-            model.CompanyId = Convert.ToInt32(reader["CompanyID"] == DBNull.Value ? default : reader["CompanyID"]);
-            model.CompanyName = reader["CompanyName"] == DBNull.Value ? default : reader["CompanyName"].ToString();
-            model.EmployeeId = Convert.ToInt32(reader["EmployeeId"] == DBNull.Value ? default : reader["EmployeeId"]);
-            model.EmployeeName = reader["EmployeeName"] == DBNull.Value ? default : reader["EmployeeName"].ToString();
-            model.PhoneNumber = Convert.ToInt64(reader["PhoneNumber"] == DBNull.Value ? default : reader["PhoneNumber"]);
-            model.StartDate = (DateTime)(reader["StartDate"] == DBNull.Value ? default(DateTime) : reader["StartDate"]);
-            model.Gender = Convert.ToChar(reader["Gender"] == DBNull.Value ? default : reader["Gender"]);
-            model.Address = reader["EmployeeAddress"] == DBNull.Value ? default : reader["EmployeeAddress"].ToString();
-            model.DepartmentId = Convert.ToInt32(reader["DepartmentId"] == DBNull.Value ? default : reader["DepartmentId"]);
-            model.Department = reader["DepartmentName"] == DBNull.Value ? default : reader["DepartmentName"].ToString();
-            model.BasicPay = Convert.ToDouble(reader["BasicPay"] == DBNull.Value ? default : reader["BasicPay"]);
-            model.TaxablePay = Convert.ToDouble(reader["TaxablePay"] == DBNull.Value ? default : reader["TaxablePay"]);
-            model.IncomeTax = Convert.ToDouble(reader["IncomeTax"] == DBNull.Value ? default : reader["IncomeTax"]);
-            model.Deductions = Convert.ToDouble(reader["Deductions"] == DBNull.Value ? default : reader["Deductions"]);
-            model.NetPay = Convert.ToDouble(reader["NetPay"] == DBNull.Value ? default : reader["NetPay"]);
-            Console.WriteLine(model);
+            Stopwatch stopWatch = new Stopwatch();
+            Task thread = Task.Run(() =>
+            {
+                stopWatch.Start();
+                Thread.Sleep(1000);
+                model.CompanyId = Convert.ToInt32(reader["CompanyID"] == DBNull.Value ? default : reader["CompanyID"]);
+                model.CompanyName = reader["CompanyName"] == DBNull.Value ? default : reader["CompanyName"].ToString();
+                model.EmployeeId = Convert.ToInt32(reader["EmployeeId"] == DBNull.Value ? default : reader["EmployeeId"]);
+                model.EmployeeName = reader["EmployeeName"] == DBNull.Value ? default : reader["EmployeeName"].ToString();
+                model.PhoneNumber = Convert.ToInt64(reader["PhoneNumber"] == DBNull.Value ? default : reader["PhoneNumber"]);
+                model.StartDate = (DateTime)(reader["StartDate"] == DBNull.Value ? default(DateTime) : reader["StartDate"]);
+                model.Gender = Convert.ToChar(reader["Gender"] == DBNull.Value ? default : reader["Gender"]);
+                model.Address = reader["EmployeeAddress"] == DBNull.Value ? default : reader["EmployeeAddress"].ToString();
+                model.DepartmentId = Convert.ToInt32(reader["DepartmentId"] == DBNull.Value ? default : reader["DepartmentId"]);
+                model.Department = reader["DepartmentName"] == DBNull.Value ? default : reader["DepartmentName"].ToString();
+                model.BasicPay = Convert.ToDouble(reader["BasicPay"] == DBNull.Value ? default : reader["BasicPay"]);
+                model.TaxablePay = Convert.ToDouble(reader["TaxablePay"] == DBNull.Value ? default : reader["TaxablePay"]);
+                model.IncomeTax = Convert.ToDouble(reader["IncomeTax"] == DBNull.Value ? default : reader["IncomeTax"]);
+                model.Deductions = Convert.ToDouble(reader["Deductions"] == DBNull.Value ? default : reader["Deductions"]);
+                model.NetPay = Convert.ToDouble(reader["NetPay"] == DBNull.Value ? default : reader["NetPay"]);          
+                Console.WriteLine(model);
+                stopWatch.Stop();
+                double elapsedTime = Math.Round((double)stopWatch.ElapsedMilliseconds, 2);
+                Console.WriteLine($"Duration For Retrieve Data With Thread : {elapsedTime} milliseconds");
+            });
+            thread.Wait();
         }
 
         //Method to take values from er db using sql data reader to model object(UC7ToUC9)
         public static void PrintErEmpDetails(SqlDataReader reader, EmployeeModel model)
         {
-            //Printing deatails that are retrived
-            model.CompanyId = Convert.ToInt32(reader["CompanyID"] == DBNull.Value ? default : reader["CompanyID"]);
-            model.CompanyName = reader["CompanyName"] == DBNull.Value ? default : reader["CompanyName"].ToString();
-            model.EmployeeId = Convert.ToInt32(reader["EmployeeId"] == DBNull.Value ? default : reader["EmployeeId"]);
-            model.EmployeeName = reader["EmployeeName"] == DBNull.Value ? default : reader["EmployeeName"].ToString();
-            model.PhoneNumber = Convert.ToInt64(reader["PhoneNumber"] == DBNull.Value ? default : reader["PhoneNumber"]);
-            model.StartDate = (DateTime)(reader["StartDate"] == DBNull.Value ? default(DateTime) : reader["StartDate"]);
-            model.Gender = Convert.ToChar(reader["Gender"] == DBNull.Value ? default : reader["Gender"]);
-            model.IsActive = reader["IsActive"] == DBNull.Value ? default : reader["IsActive"].ToString();
-            Console.WriteLine($"Employee Details For {model.EmployeeName} Is Listed Below : \nCompany Id : {model.CompanyId} \tCompany Name : {model.CompanyName} \tId : {model.EmployeeId}" +
-                $" \tName : {model.EmployeeName} \tPhoneNo : {model.PhoneNumber} \tStartDate : {model.StartDate} \tGender : {model.Gender} \tIsActive : {model.IsActive}");
+            Stopwatch stopWatch = new Stopwatch();
+            Task thread = Task.Run(() =>
+            {
+                stopWatch.Start();
+                //Printing deatails that are retrived
+                model.CompanyId = Convert.ToInt32(reader["CompanyID"] == DBNull.Value ? default : reader["CompanyID"]);
+                model.CompanyName = reader["CompanyName"] == DBNull.Value ? default : reader["CompanyName"].ToString();
+                model.EmployeeId = Convert.ToInt32(reader["EmployeeId"] == DBNull.Value ? default : reader["EmployeeId"]);
+                model.EmployeeName = reader["EmployeeName"] == DBNull.Value ? default : reader["EmployeeName"].ToString();
+                model.PhoneNumber = Convert.ToInt64(reader["PhoneNumber"] == DBNull.Value ? default : reader["PhoneNumber"]);
+                model.StartDate = (DateTime)(reader["StartDate"] == DBNull.Value ? default(DateTime) : reader["StartDate"]);
+                model.Gender = Convert.ToChar(reader["Gender"] == DBNull.Value ? default : reader["Gender"]);
+                model.IsActive = reader["IsActive"] == DBNull.Value ? default : reader["IsActive"].ToString();
+                Console.WriteLine($"Employee Details For {model.EmployeeName} Is Listed Below : \nCompany Id : {model.CompanyId} \tCompany Name : {model.CompanyName} \tId : {model.EmployeeId}" +
+                              $" \tName : {model.EmployeeName} \tPhoneNo : {model.PhoneNumber} \tStartDate : {model.StartDate} \tGender : {model.Gender} \tIsActive : {model.IsActive}");
+                stopWatch.Stop();
+                double elapsedTime = Math.Round((double)stopWatch.ElapsedMilliseconds, 2);
+                Console.WriteLine($"Duration For Retrieve Data With Thread : {elapsedTime} milliseconds");
+            });
+            thread.Wait();
         }
 
         //Method to take values from er db using sql data reader to model object(UC7ToUC9)
         public static void PrintErPayrollDetails(SqlDataReader reader, EmployeeModel model)
         {
-            //Printing deatails that are retrived
-            model.EmployeeId = Convert.ToInt32(reader["EmployeeId"] == DBNull.Value ? default : reader["EmployeeId"]);
-            model.BasicPay = Convert.ToDouble(reader["BasicPay"] == DBNull.Value ? default : reader["BasicPay"]);
-            model.TaxablePay = Convert.ToDouble(reader["TaxablePay"] == DBNull.Value ? default : reader["TaxablePay"]);
-            model.IncomeTax = Convert.ToDouble(reader["IncomeTax"] == DBNull.Value ? default : reader["IncomeTax"]);
-            model.NetPay = Convert.ToDouble(reader["NetPay"] == DBNull.Value ? default : reader["NetPay"]);
-            model.Deductions = Convert.ToDouble(reader["Deductions"] == DBNull.Value ? default : reader["Deductions"]);
-            Console.WriteLine($"Payroll Details For Employee Id {model.EmployeeId} Is : \tBasic Pay : {model.BasicPay} \tTaxable Pay : {model.TaxablePay} \tIncome Tax : {model.IncomeTax}" +
-                $"\tNet Pay : {model.NetPay} \tDeductions : {model.Deductions}");
+            Stopwatch stopWatch = new Stopwatch();
+            Task thread = Task.Run(() =>
+            {
+                //Printing deatails that are retrived
+                model.EmployeeId = Convert.ToInt32(reader["EmployeeId"] == DBNull.Value ? default : reader["EmployeeId"]);
+                model.BasicPay = Convert.ToDouble(reader["BasicPay"] == DBNull.Value ? default : reader["BasicPay"]);
+                model.TaxablePay = Convert.ToDouble(reader["TaxablePay"] == DBNull.Value ? default : reader["TaxablePay"]);
+                model.IncomeTax = Convert.ToDouble(reader["IncomeTax"] == DBNull.Value ? default : reader["IncomeTax"]);
+                model.NetPay = Convert.ToDouble(reader["NetPay"] == DBNull.Value ? default : reader["NetPay"]);
+                model.Deductions = Convert.ToDouble(reader["Deductions"] == DBNull.Value ? default : reader["Deductions"]);
+                Console.WriteLine($"Payroll Details For Employee Id {model.EmployeeId} Is : \tBasic Pay : {model.BasicPay} \tTaxable Pay : {model.TaxablePay} \tIncome Tax : {model.IncomeTax}" +
+                    $"\tNet Pay : {model.NetPay} \tDeductions : {model.Deductions}");
+                stopWatch.Stop();
+                double elapsedTime = Math.Round((double)stopWatch.ElapsedMilliseconds, 2);
+                Console.WriteLine($"Duration For Retrieve Data With Thread : {elapsedTime} milliseconds");
+            });
+            thread.Wait();
         }
 
         //Method to fetch all records from er employee db using the given name(UC7ToUC9)
