@@ -20,6 +20,8 @@ namespace ADO.NetEmployeePayRollProgram
         public static SqlConnection sqlConnection = null;
         //Declaring list object
         public static List<EmployeeModel> employeePayrollDetailsList = new List<EmployeeModel>();
+        //Creating lock object
+        private static readonly object addProcess = new object();
 
         //Method to insert data into multiple tables(UC10)
         public static string InsertDataIntoMulTableUsingTransaction(EmployeeModel model)
@@ -274,15 +276,19 @@ namespace ADO.NetEmployeePayRollProgram
                 {     
                     Task thread = Task.Run(() =>
                     {
-                        //start the stopwatch
-                        stopWatch.Start();
-                        Console.WriteLine("Employee Being Added : " + employeeData.EmployeeName);
-                        InsertDataIntoMulTableUsingTransaction(employeeData);
-                        Console.WriteLine("Employee Added Into Db : " + employeeData.EmployeeName);
-                        //stop stopwatch
-                        stopWatch.Stop();
-                        double elapsedTime = Math.Round((double)stopWatch.ElapsedMilliseconds / 1000, 2);
-                        Console.WriteLine($"Duration With Thread For {employeeData.EmployeeName} : {elapsedTime} milliseconds");
+                        //Using lock for synchronization
+                        lock (addProcess)
+                        {
+                            //start the stopwatch
+                            stopWatch.Start();
+                            Console.WriteLine("Employee Being Added : " + employeeData.EmployeeName);
+                            InsertDataIntoMulTableUsingTransaction(employeeData);
+                            Console.WriteLine("Employee Added Into Db : " + employeeData.EmployeeName);
+                            //stop stopwatch
+                            stopWatch.Stop();
+                            double elapsedTime = Math.Round((double)stopWatch.ElapsedMilliseconds / 1000, 2);
+                            Console.WriteLine($"Duration With Thread For {employeeData.EmployeeName} : {elapsedTime} milliseconds");
+                        }                       
                     });
                     thread.Wait();             
                 });
