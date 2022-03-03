@@ -241,8 +241,10 @@ namespace ADO.NetEmployeePayRollProgram
         //Method to add mul employee into db table without using thread(UC13)
         public static string AddMulEmployeeToPayrollWithoutThread(List<EmployeeModel> employeePayroll)
         {
+            Stopwatch stopMainWatch = new Stopwatch();
             try
             {
+                stopMainWatch.Start();
                 employeePayroll.ForEach(employeeData =>
                 {
                     //object for stopwatch
@@ -257,6 +259,9 @@ namespace ADO.NetEmployeePayRollProgram
                     double elapsedTime = Math.Round((double)stopWatch.ElapsedMilliseconds / 1000, 2);
                     Console.WriteLine($"Duration Without Thread For {employeeData.EmployeeName} : {elapsedTime} milliseconds");
                 });
+                stopMainWatch.Stop();
+                double elapsedExecTime = Math.Round((double)stopMainWatch.ElapsedMilliseconds / 1000, 2);
+                Console.WriteLine($"Duration With Thread Execution Time Is : {elapsedExecTime} milliseconds");
                 return $"Successfull";
             }
             catch(Exception ex)
@@ -270,8 +275,10 @@ namespace ADO.NetEmployeePayRollProgram
         {
             //object for stopwatch
             Stopwatch stopWatch = new Stopwatch();
+            Stopwatch stopMainWatch = new Stopwatch();
             try
             {
+                stopMainWatch.Start();
                 employeePayroll.ForEach(employeeData =>
                 {     
                     Task thread = Task.Run(() =>
@@ -292,6 +299,9 @@ namespace ADO.NetEmployeePayRollProgram
                     });
                     thread.Wait();             
                 });
+                stopMainWatch.Stop();
+                double elapsedExecTime = Math.Round((double)stopMainWatch.ElapsedMilliseconds / 1000, 2);
+                Console.WriteLine($"Duration With Thread Execution Time Is : {elapsedExecTime} milliseconds");
                 return $"Successfull";
             }
             catch (Exception ex)

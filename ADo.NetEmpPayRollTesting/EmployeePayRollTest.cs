@@ -124,11 +124,15 @@ namespace ADo.NetEmpPayRollTesting
             string actual = PayRollTransactions.InsertDataIntoMulTableUsingTransaction(employeeModel);
             Assert.AreEqual(actual, expected);
         }
-/*
+
         //Testing the delete data from mul tables method to check if it is deleted successfully or not(UC11-TC11.1)
         [TestMethod]
-        [DataRow(27, "Vaibhav", "Deleted The Data Successfully")]
-        [DataRow(27, "Vaibhav", "Unsucesfull")]
+        [DataRow(78, "Raj", "Deleted The Data Successfully")]
+        [DataRow(79, "Amit", "Deleted The Data Successfully")]
+        [DataRow(80, "Jerin", "Deleted The Data Successfully")]
+        [DataRow(81, "Abhishek", "Deleted The Data Successfully")]
+        [DataRow(82, "Mahipal", "Deleted The Data Successfully")]
+        [DataRow(82, "Mahipal", "Unsucesfull")]
         public void GivenSPReturnCascadeDeletedResult(int employeeId, string name, string expected)
         {
             EmployeeModel employeeModel = new EmployeeModel();
@@ -165,7 +169,7 @@ namespace ADo.NetEmpPayRollTesting
             };
             var actual = PayRollTransactions.AddMulEmployeeToPayrollWithoutThread(employees);
             Assert.AreEqual(expected, actual);
-        }*/
+        }
 
         //Testing the insert method with using thread and synchronization(UC14-TC14.1&&UC15-TC15.1)
         [TestMethod]
