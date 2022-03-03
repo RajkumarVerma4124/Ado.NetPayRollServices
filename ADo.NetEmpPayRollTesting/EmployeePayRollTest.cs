@@ -124,7 +124,7 @@ namespace ADo.NetEmpPayRollTesting
             string actual = PayRollTransactions.InsertDataIntoMulTableUsingTransaction(employeeModel);
             Assert.AreEqual(actual, expected);
         }
-/*
+
         //Testing the delete data from mul tables method to check if it is deleted successfully or not(UC11-TC11.1)
         [TestMethod]
         [DataRow(27, "Vaibhav", "Deleted The Data Successfully")]
@@ -165,7 +165,7 @@ namespace ADo.NetEmpPayRollTesting
             };
             var actual = PayRollTransactions.AddMulEmployeeToPayrollWithoutThread(employees);
             Assert.AreEqual(expected, actual);
-        }*/
+        }
 
         //Testing the insert method with using thread and synchronization(UC14-TC14.1&&UC15-TC15.1)
         [TestMethod]
