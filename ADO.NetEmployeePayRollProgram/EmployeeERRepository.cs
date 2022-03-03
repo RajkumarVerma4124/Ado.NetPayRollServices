@@ -53,6 +53,47 @@ namespace ADO.NetEmployeePayRollProgram
             }
         }
 
+        //Method to fetch all employee and payroll records using er diagram(UC7ToUC9)
+        public static void GetAllEREmpAndPayrollUsingName(EmployeeModel model)
+        {
+            try
+            {
+                using (sqlConnection = new SqlConnection(ConnectionString))
+                {
+                    //Stored Procedure to retreive data
+                    SqlCommand command = new SqlCommand("spGetEREmpAndPayrollUsingName", sqlConnection);
+                    //Setting command type to stored procedure
+                    command.CommandType = CommandType.StoredProcedure;
+                    //Add parameters to stored procedures
+                    command.Parameters.AddWithValue("@EmployeeName", model.EmployeeName);
+                    //Open the connection
+                    sqlConnection.Open();
+                    //Sql data reader- using execute reader returns object for resultset
+                    SqlDataReader reader = command.ExecuteReader();
+                    //checking result set has rows are not
+                    if (reader.HasRows)
+                    {
+                        while (reader.Read())
+                        {
+                            PrintErEmpDetails(reader, model);
+                            PrintErPayrollDetails(reader, model);
+                        }
+                        Console.WriteLine("Found The Data With Given Name"); 
+                    }
+                    else
+                        Console.WriteLine("No Records Founds");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            finally
+            {
+                sqlConnection.Close();
+            }
+        }
+
         //Method to update er employee salary from the db(UC7ToUC9)
         public static string UpdateEREmpSalary(EmployeeModel model)
         {
@@ -119,6 +160,20 @@ namespace ADO.NetEmployeePayRollProgram
             model.IsActive = reader["IsActive"] == DBNull.Value ? default : reader["IsActive"].ToString();
             Console.WriteLine($"Employee Details For {model.EmployeeName} Is Listed Below : \nCompany Id : {model.CompanyId} \tCompany Name : {model.CompanyName} \tId : {model.EmployeeId}" +
                 $" \tName : {model.EmployeeName} \tPhoneNo : {model.PhoneNumber} \tStartDate : {model.StartDate} \tGender : {model.Gender} \tIsActive : {model.IsActive}");
+        }
+
+        //Method to take values from er db using sql data reader to model object(UC7ToUC9)
+        public static void PrintErPayrollDetails(SqlDataReader reader, EmployeeModel model)
+        {
+            //Printing deatails that are retrived
+            model.EmployeeId = Convert.ToInt32(reader["EmployeeId"] == DBNull.Value ? default : reader["EmployeeId"]);
+            model.BasicPay = Convert.ToDouble(reader["BasicPay"] == DBNull.Value ? default : reader["BasicPay"]);
+            model.TaxablePay = Convert.ToDouble(reader["TaxablePay"] == DBNull.Value ? default : reader["TaxablePay"]);
+            model.IncomeTax = Convert.ToDouble(reader["IncomeTax"] == DBNull.Value ? default : reader["IncomeTax"]);
+            model.NetPay = Convert.ToDouble(reader["NetPay"] == DBNull.Value ? default : reader["NetPay"]);
+            model.Deductions = Convert.ToDouble(reader["Deductions"] == DBNull.Value ? default : reader["Deductions"]);
+            Console.WriteLine($"Payroll Details For Employee Id {model.EmployeeId} Is : \tBasic Pay : {model.BasicPay} \tTaxable Pay : {model.TaxablePay} \tIncome Tax : {model.IncomeTax}" +
+                $"\tNet Pay : {model.NetPay} \tDeductions : {model.Deductions}");
         }
 
         //Method to fetch all records from er employee db using the given name(UC7ToUC9)

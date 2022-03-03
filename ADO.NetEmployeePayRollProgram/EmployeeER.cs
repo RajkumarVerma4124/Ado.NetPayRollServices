@@ -25,7 +25,7 @@ namespace ADO.NetEmployeePayRollProgram
                 {
                     Console.WriteLine("1: Get All Employee \n2: Update Salary Of Employee \n3: Find Employee Using Name \n4: Find Employee Using Start Date"+
                                       "\n5: Find Employee Using Income Range \n6: Aggregate Functions \n7: Add Data Into Multiple Tables \n8: Cascade delete"+
-                                      "\n9: Add IsActive Coulumn \n10: AuditList \n11: Find Employee Using Checking IsActive State \n12: Go Back");
+                                      "\n9: Add IsActive Coulumn \n10: AuditList \n11: Find Employee Using Checking IsActive State \n12: Get Employee And PayRoll Info \n13: Go Back");
                     Console.Write("Enter a choice from above : ");
                     bool flag = int.TryParse(Console.ReadLine(), out int choice);
                     if (flag)
@@ -135,6 +135,13 @@ namespace ADO.NetEmployeePayRollProgram
                                 Console.WriteLine(result);
                                 break;
                             case 12:
+                                //Retrieving the employee and payroll records by using name from db(UC5)
+                                Console.Write("Enter The Name Of The Employee : ");
+                                model.EmployeeName = Console.ReadLine();
+                                EmployeeERRepository.GetAllEREmpAndPayrollUsingName(model);
+                                Console.WriteLine(result);
+                                break;
+                            case 13:
                                 //For going back to the main menu
                                 Program.Main(null);
                                 break;

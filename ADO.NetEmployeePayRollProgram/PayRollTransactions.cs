@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,6 +18,8 @@ namespace ADO.NetEmployeePayRollProgram
         public static string ConnectionString = @"Data Source=RAJ-VERMA;Initial Catalog=PayRoll_Service;Integrated Security=True;";
         //SqlConnection
         public static SqlConnection sqlConnection = null;
+        //Declaring list object
+        public static List<EmployeeModel> employeePayrollDetailsList = new List<EmployeeModel>();
 
         //Method to insert data into multiple tables(UC10)
         public static string InsertDataIntoMulTableUsingTransaction(EmployeeModel model)
@@ -231,6 +234,33 @@ namespace ADO.NetEmployeePayRollProgram
                 }
             }
             return default;
+        }
+
+        //Method to add mul employee into db table without using thread(UC13)
+        public static string AddMulEmployeeToPayrollWithoutThread(List<EmployeeModel> employeePayroll)
+        {
+            try
+            {
+                employeePayroll.ForEach(employeeData =>
+                {
+                    //object for stopwatch
+                    Stopwatch stopWatch = new Stopwatch();
+                    //start the stopwatch
+                    stopWatch.Start();
+                    Console.WriteLine("Employee Being Added" + employeeData.EmployeeName);
+                    InsertDataIntoMulTableUsingTransaction(employeeData);
+                    Console.WriteLine("Employee Added Into Db" + employeeData.EmployeeName);
+                    //stop stopwatch
+                    stopWatch.Stop();
+                    double elapsedTime = Math.Round((double)stopWatch.ElapsedMilliseconds / 1000, 2);
+                    Console.WriteLine($"Duration Without Thread : {elapsedTime} milliseconds");
+                });
+                return $"Successfull";
+            }
+            catch(Exception ex)
+            {
+                return ex.Message;
+            }         
         }
     }
 }

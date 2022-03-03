@@ -1,6 +1,7 @@
 ﻿using ADO.NetEmployeePayRollProgram;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections.Generic;
 
 namespace ADo.NetEmpPayRollTesting
 {
@@ -126,8 +127,8 @@ namespace ADo.NetEmpPayRollTesting
 
         //Testing the delete data from mul tables method to check if it is deleted successfully or not(UC11-TC11.1)
         [TestMethod]
-        [DataRow(24, "Yash", "Deleted The Data Successfully")]
-        [DataRow(24, "Yash", "Unsucesfull")]
+        [DataRow(27, "Vaibhav", "Deleted The Data Successfully")]
+        [DataRow(27, "Vaibhav", "Unsucesfull")]
         public void GivenSPReturnCascadeDeletedResult(int employeeId, string name, string expected)
         {
             EmployeeModel employeeModel = new EmployeeModel();
@@ -147,6 +148,23 @@ namespace ADo.NetEmpPayRollTesting
             employeeModel.EmployeeId = employeeId;
             string actual = PayRollTransactions.AuditList(employeeModel);
             Assert.AreEqual(actual, expected);
+        }
+
+        //Testing the insert method without using thread(UC13-TC13.1)
+        [TestMethod]
+        [DataRow("Successfull")]
+        public void TestingWithoutThread(string expected)
+        {
+            List<EmployeeModel> employees = new List <EmployeeModel> ()
+            {
+                new EmployeeModel { CompanyId = 1, EmployeeName = "Raj", StartDate = Convert.ToDateTime("2020-10-21"), Gender = 'M', PhoneNumber = 9658740123, Address = "Vashi", BasicPay = 41500, Deductions = 999.99,IncomeTax = 4999.99, TaxablePay = 41500-999.99, NetPay = 39500.02},
+                new EmployeeModel { CompanyId = 2, EmployeeName = "Amit", StartDate = Convert.ToDateTime("2019-12-25"), Gender = 'M', PhoneNumber = 9654780123, Address = "Govandi", BasicPay = 42500, Deductions = 999.99,IncomeTax = 4999.99, TaxablePay = 41500-999.99, NetPay = 40500.01},
+                new EmployeeModel { CompanyId = 3, EmployeeName = "Jerin", StartDate = Convert.ToDateTime("2018-10-11"), Gender = 'M', PhoneNumber = 9658741233, Address = "Airoli", BasicPay = 44500, Deductions = 999.99,IncomeTax = 4999.99, TaxablePay = 41500-999.99, NetPay = 42500.01},
+                new EmployeeModel { CompanyId = 1, EmployeeName = "Raj", StartDate = Convert.ToDateTime("2020-10-21"), Gender = 'M', PhoneNumber = 9658470123, Address = "Powai", BasicPay = 47500, Deductions = 999.99,IncomeTax = 4999.99, TaxablePay = 41500-999.99, NetPay = 45500.01},
+                new EmployeeModel { CompanyId = 2, EmployeeName = "Mahipal", StartDate = Convert.ToDateTime("2019-05-15"), Gender = 'M', PhoneNumber = 9678540123, Address = "Nerul", BasicPay = 49500, Deductions = 999.99,IncomeTax = 4999.99, TaxablePay = 41500-999.99, NetPay = 47500.01},
+            };
+            var actual = PayRollTransactions.AddEmployeeToPayrollWithoutThread(employees);
+            Assert.AreEqual(expected, actual);
         }
     }
 }
