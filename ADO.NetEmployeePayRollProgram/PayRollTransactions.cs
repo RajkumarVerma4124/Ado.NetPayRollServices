@@ -22,6 +22,7 @@ namespace ADO.NetEmployeePayRollProgram
         public static List<EmployeeModel> employeePayrollDetailsList = new List<EmployeeModel>();
         //Creating lock object
         private static readonly object addProcess = new object();
+        private static readonly object updateProcess = new object();
 
         //Method to insert data into multiple tables(UC10)
         public static string InsertDataIntoMulTableUsingTransaction(EmployeeModel model)
@@ -238,7 +239,7 @@ namespace ADO.NetEmployeePayRollProgram
             return default;
         }
 
-        //Method to add mul employee into db table without using thread(UC13)
+        //Method to add mul employee into db table without using thread(UC13,UC16)
         public static string AddMulEmployeeToPayrollWithoutThread(List<EmployeeModel> employeePayroll)
         {
             Stopwatch stopMainWatch = new Stopwatch();
@@ -256,11 +257,11 @@ namespace ADO.NetEmployeePayRollProgram
                     Console.WriteLine("Employee Added Into Db : " + employeeData.EmployeeName);
                     //stop stopwatch
                     stopWatch.Stop();
-                    double elapsedTime = Math.Round((double)stopWatch.ElapsedMilliseconds / 1000, 2);
+                    double elapsedTime = Math.Round((double)stopWatch.ElapsedMilliseconds, 2);
                     Console.WriteLine($"Duration Without Thread For {employeeData.EmployeeName} : {elapsedTime} milliseconds");
                 });
                 stopMainWatch.Stop();
-                double elapsedExecTime = Math.Round((double)stopMainWatch.ElapsedMilliseconds / 1000, 2);
+                double elapsedExecTime = Math.Round((double)stopMainWatch.ElapsedMilliseconds , 2);
                 Console.WriteLine($"Duration With Thread Execution Time Is : {elapsedExecTime} milliseconds");
                 return $"Successfull";
             }
@@ -270,7 +271,7 @@ namespace ADO.NetEmployeePayRollProgram
             }         
         }
 
-        //Method to add mul employee into db table using thread(UC14)
+        //Method to add mul employee into db table using thread(UC14,UC15,UC16)
         public static string AddMulEmployeeToPayrollUsingThread(List<EmployeeModel> employeePayroll)
         {
             //object for stopwatch
@@ -293,14 +294,54 @@ namespace ADO.NetEmployeePayRollProgram
                             Console.WriteLine("Employee Added Into Db : " + employeeData.EmployeeName);
                             //stop stopwatch
                             stopWatch.Stop();
-                            double elapsedTime = Math.Round((double)stopWatch.ElapsedMilliseconds / 1000, 2);
+                            double elapsedTime = Math.Round((double)stopWatch.ElapsedMilliseconds, 2);
                             Console.WriteLine($"Duration With Thread For {employeeData.EmployeeName} : {elapsedTime} milliseconds");
                         }                       
                     });
                     thread.Wait();             
                 });
                 stopMainWatch.Stop();
-                double elapsedExecTime = Math.Round((double)stopMainWatch.ElapsedMilliseconds / 1000, 2);
+                double elapsedExecTime = Math.Round((double)stopMainWatch.ElapsedMilliseconds , 2);
+                Console.WriteLine($"Duration With Thread Execution Time Is : {elapsedExecTime} milliseconds");
+                return $"Successfull";
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+        }
+
+        //Method to add mul employee into db table using thread(UC14,UC15,UC16)
+        public static string UpdateMulEmpSalaryUsingThread(List<EmployeeModel> employeePayroll)
+        {
+            //object for stopwatch
+            Stopwatch stopWatch = new Stopwatch();
+            Stopwatch stopMainWatch = new Stopwatch();
+            try
+            {
+                stopMainWatch.Start();
+                employeePayroll.ForEach(employeeData =>
+                {
+                    Task thread = Task.Run(() =>
+                    {
+                        //Using lock for synchronization
+                        lock (updateProcess)
+                        {
+                            //start the stopwatch
+                            stopWatch.Start();
+                            Console.WriteLine("Employee Salary Being Added : " + employeeData.EmployeeName);
+                            EmployeeERRepository.UpdateEREmpSalary(employeeData);
+                            Console.WriteLine("Employee Salary Updated Into Db : " + employeeData.EmployeeName);
+                            //stop stopwatch
+                            stopWatch.Stop();
+                            double elapsedTime = Math.Round((double)stopWatch.ElapsedMilliseconds, 2);
+                            Console.WriteLine($"Duration For Update With Thread For {employeeData.EmployeeName} : {elapsedTime} milliseconds");
+                        }
+                    });
+                    thread.Wait();
+                });
+                stopMainWatch.Stop();
+                double elapsedExecTime = Math.Round((double)stopMainWatch.ElapsedMilliseconds, 2);
                 Console.WriteLine($"Duration With Thread Execution Time Is : {elapsedExecTime} milliseconds");
                 return $"Successfull";
             }

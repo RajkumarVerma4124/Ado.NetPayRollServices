@@ -12,7 +12,7 @@ namespace ADo.NetEmpPayRollTesting
         [TestMethod]
         [DataRow(1, "Raj", 45000,"Data Updated Succesfully")]
         [DataRow(2, "Raj", 42000, "Update Unsuccessfull")]
-        public void GivenSPReturnUpdatedResult(int id, string name, float basicPay, string expected)
+        public void GivenSPUpdateEmpRecords(int id, string name, float basicPay, string expected)
         {
             EmployeeModel employeeModel = new EmployeeModel();
             employeeModel.EmployeeId = id;
@@ -26,7 +26,7 @@ namespace ADo.NetEmpPayRollTesting
         [TestMethod]
         [DataRow(1, "Rajkumar", 42000, "Data Updated Succesfully")]
         [DataRow(2, "Raj", 42000, "Update Unsuccessfull")]
-        public void GivenSPReturnUpdatedErResult(int id, string name, float basicPay, string expected)
+        public void GivenSPUpdateEREmpRecords(int id, string name, float basicPay, string expected)
         {
             EmployeeModel employeeModel = new EmployeeModel();
             employeeModel.EmployeeId = id;
@@ -38,7 +38,7 @@ namespace ADo.NetEmpPayRollTesting
 
         //Testing the Delete method of employee to check if its delted successfully or not(UC4-TC4.2)
         [TestMethod]
-        //[DataRow(10, "Sachin", "Data Deleted Succesfully")]
+        [DataRow(10, "Sachin", "Data Deleted Succesfully")]
         [DataRow(14, "Kumar", "Unsuccessfull")]
         public void GivenSPReturnDeletedResult(int id, string name, string expected)
         {
@@ -107,7 +107,7 @@ namespace ADo.NetEmpPayRollTesting
         //Testing the insert data into mul tables method to check if it is added successfully or not(UC10-TC10.1)
         [TestMethod]
         [DataRow(2, "Yash", "2020-10-21", 'M', 9658740123, "Govandi", 43500, 999.99, 4999.99, "Inserted The Data Successfully")]
-        public void GivenSPReturnAdddedResult(int companyId, string name, string date, char gender, long phoneNum, string addr, double basicPay, double dedcution, double incTax, string expected)
+        public void GivenSPReturnAddedResult(int companyId, string name, string date, char gender, long phoneNum, string addr, double basicPay, double dedcution, double incTax, string expected)
         {
             EmployeeModel employeeModel = new EmployeeModel();
             employeeModel.CompanyId = companyId;
@@ -160,13 +160,13 @@ namespace ADo.NetEmpPayRollTesting
         public void GivenMulEmployeeAddToDbWithoutThread(string expected)
         {
             List<EmployeeModel> employees = new List<EmployeeModel>()
-            {
-                new EmployeeModel { CompanyId = 1, EmployeeName = "Raj", StartDate = Convert.ToDateTime("2020-10-21"), Gender = 'M', PhoneNumber = 9658740123, Address = "Vashi", BasicPay = 41500, Deductions = 999.99,IncomeTax = 4999.99, TaxablePay = 41500-999.99, NetPay = 39500.02},
-                new EmployeeModel { CompanyId = 2, EmployeeName = "Amit", StartDate = Convert.ToDateTime("2019-12-25"), Gender = 'M', PhoneNumber = 9654780123, Address = "Govandi", BasicPay = 42500, Deductions = 999.99,IncomeTax = 4999.99, TaxablePay = 41500-999.99, NetPay = 40500.01},
-                new EmployeeModel { CompanyId = 3, EmployeeName = "Jerin", StartDate = Convert.ToDateTime("2018-10-11"), Gender = 'M', PhoneNumber = 9658741233, Address = "Airoli", BasicPay = 44500, Deductions = 999.99,IncomeTax = 4999.99, TaxablePay = 41500-999.99, NetPay = 42500.01},
-                new EmployeeModel { CompanyId = 1, EmployeeName = "Raj", StartDate = Convert.ToDateTime("2020-10-21"), Gender = 'M', PhoneNumber = 9658470123, Address = "Powai", BasicPay = 47500, Deductions = 999.99,IncomeTax = 4999.99, TaxablePay = 41500-999.99, NetPay = 45500.01},
-                new EmployeeModel { CompanyId = 2, EmployeeName = "Mahipal", StartDate = Convert.ToDateTime("2019-05-15"), Gender = 'M', PhoneNumber = 9678540123, Address = "Nerul", BasicPay = 49500, Deductions = 999.99,IncomeTax = 4999.99, TaxablePay = 41500-999.99, NetPay = 47500.01},
-            };
+             {
+                 new EmployeeModel { CompanyId = 1, EmployeeName = "Raj", StartDate = Convert.ToDateTime("2020-10-21"), Gender = 'M', PhoneNumber = 9658740123, Address = "Vashi", BasicPay = 41500, Deductions = 999.99,IncomeTax = 4999.99, TaxablePay = 41500-999.99, NetPay = 39500.02},
+                 new EmployeeModel { CompanyId = 2, EmployeeName = "Amit", StartDate = Convert.ToDateTime("2019-12-25"), Gender = 'M', PhoneNumber = 9654780123, Address = "Govandi", BasicPay = 42500, Deductions = 999.99,IncomeTax = 4999.99, TaxablePay = 41500-999.99, NetPay = 40500.01},
+                 new EmployeeModel { CompanyId = 3, EmployeeName = "Jerin", StartDate = Convert.ToDateTime("2018-10-11"), Gender = 'M', PhoneNumber = 9658741233, Address = "Airoli", BasicPay = 44500, Deductions = 999.99,IncomeTax = 4999.99, TaxablePay = 41500-999.99, NetPay = 42500.01},
+                 new EmployeeModel { CompanyId = 1, EmployeeName = "Raj", StartDate = Convert.ToDateTime("2020-10-21"), Gender = 'M', PhoneNumber = 9658470123, Address = "Powai", BasicPay = 47500, Deductions = 999.99,IncomeTax = 4999.99, TaxablePay = 41500-999.99, NetPay = 45500.01},
+                 new EmployeeModel { CompanyId = 2, EmployeeName = "Mahipal", StartDate = Convert.ToDateTime("2019-05-15"), Gender = 'M', PhoneNumber = 9678540123, Address = "Nerul", BasicPay = 49500, Deductions = 999.99,IncomeTax = 4999.99, TaxablePay = 41500-999.99, NetPay = 47500.01},
+             };
             var actual = PayRollTransactions.AddMulEmployeeToPayrollWithoutThread(employees);
             Assert.AreEqual(expected, actual);
         }
@@ -177,15 +177,32 @@ namespace ADo.NetEmpPayRollTesting
         public void GivenMulEmpAddUsingThreadAndSynchronization(string expected)
         {
             List<EmployeeModel> employees = new List<EmployeeModel>()
-            {
-                new EmployeeModel { CompanyId = 1, EmployeeName = "Raj", StartDate = Convert.ToDateTime("2020-10-21"), Gender = 'M', PhoneNumber = 9658740123, Address = "Vashi", BasicPay = 41500, Deductions = 999.99,IncomeTax = 4999.99, TaxablePay = 41500-999.99, NetPay = 39500.02},
-                new EmployeeModel { CompanyId = 2, EmployeeName = "Amit", StartDate = Convert.ToDateTime("2019-12-25"), Gender = 'M', PhoneNumber = 9654780123, Address = "Govandi", BasicPay = 42500, Deductions = 999.99,IncomeTax = 4999.99, TaxablePay = 41500-999.99, NetPay = 40500.01},
-                new EmployeeModel { CompanyId = 3, EmployeeName = "Jerin", StartDate = Convert.ToDateTime("2018-10-11"), Gender = 'M', PhoneNumber = 9658741233, Address = "Airoli", BasicPay = 44500, Deductions = 999.99,IncomeTax = 4999.99, TaxablePay = 41500-999.99, NetPay = 42500.01},
-                new EmployeeModel { CompanyId = 1, EmployeeName = "Abhishek", StartDate = Convert.ToDateTime("2020-10-21"), Gender = 'M', PhoneNumber = 9658470123, Address = "Powai", BasicPay = 47500, Deductions = 999.99,IncomeTax = 4999.99, TaxablePay = 41500-999.99, NetPay = 45500.01},
-                new EmployeeModel { CompanyId = 2, EmployeeName = "Mahipal", StartDate = Convert.ToDateTime("2019-05-15"), Gender = 'M', PhoneNumber = 9678540123, Address = "Nerul", BasicPay = 49500, Deductions = 999.99,IncomeTax = 4999.99, TaxablePay = 41500-999.99, NetPay = 47500.01},
-            };
+             {
+                 new EmployeeModel { CompanyId = 1, EmployeeName = "Raj", StartDate = Convert.ToDateTime("2020-10-21"), Gender = 'M', PhoneNumber = 9658740123, Address = "Vashi", BasicPay = 41500, Deductions = 999.99,IncomeTax = 4999.99, TaxablePay = 41500-999.99, NetPay = 39500.02},
+                 new EmployeeModel { CompanyId = 2, EmployeeName = "Amit", StartDate = Convert.ToDateTime("2019-12-25"), Gender = 'M', PhoneNumber = 9654780123, Address = "Govandi", BasicPay = 42500, Deductions = 999.99,IncomeTax = 4999.99, TaxablePay = 41500-999.99, NetPay = 40500.01},
+                 new EmployeeModel { CompanyId = 3, EmployeeName = "Jerin", StartDate = Convert.ToDateTime("2018-10-11"), Gender = 'M', PhoneNumber = 9658741233, Address = "Airoli", BasicPay = 44500, Deductions = 999.99,IncomeTax = 4999.99, TaxablePay = 41500-999.99, NetPay = 42500.01},
+                 new EmployeeModel { CompanyId = 1, EmployeeName = "Abhishek", StartDate = Convert.ToDateTime("2020-10-21"), Gender = 'M', PhoneNumber = 9658470123, Address = "Powai", BasicPay = 47500, Deductions = 999.99,IncomeTax = 4999.99, TaxablePay = 41500-999.99, NetPay = 45500.01},
+                 new EmployeeModel { CompanyId = 2, EmployeeName = "Mahipal", StartDate = Convert.ToDateTime("2019-05-15"), Gender = 'M', PhoneNumber = 9678540123, Address = "Nerul", BasicPay = 49500, Deductions = 999.99,IncomeTax = 4999.99, TaxablePay = 41500-999.99, NetPay = 47500.01},
+             };
             var actual = PayRollTransactions.AddMulEmployeeToPayrollUsingThread(employees);
             Assert.AreEqual(expected, actual);
+        }
+
+        //Testing the update method of mul employee to check if its updated successfully or not(UC17-TC17.1)
+        [TestMethod]
+        [DataRow("Successfull")]
+        public void GivenSPUpdateMulEREmpRecords(string expected)
+        {
+             List<EmployeeModel> employees = new List<EmployeeModel>()
+             {
+                 new EmployeeModel { EmployeeId = 84, EmployeeName = "Raj", BasicPay = 49500},
+                 new EmployeeModel { EmployeeId = 85, EmployeeName = "Amit", BasicPay = 44500},
+                 new EmployeeModel { EmployeeId = 86, EmployeeName = "Jerin", BasicPay = 43500},
+                 new EmployeeModel { EmployeeId = 87, EmployeeName = "Abhishek", BasicPay = 42500},
+                 new EmployeeModel { EmployeeId = 88, EmployeeName = "Mahipal", BasicPay = 41500},
+             };
+            string actual = PayRollTransactions.UpdateMulEmpSalaryUsingThread(employees);
+            Assert.AreEqual(actual, expected);
         }
     }
 }
