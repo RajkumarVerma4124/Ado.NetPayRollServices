@@ -78,9 +78,7 @@ namespace EmployeePayrollRestSharpTesting
         [TestMethod]
         public void GivenEmployeeOnPostAPIReturnEmployee()
         {
-            /*//Setting rest rquest to url and setiing method to post
-            RestRequest request = new RestRequest("/employees", Method.POST);*/
-            //Object for json
+            //Creating object for json
             JsonObject jsonObject = new JsonObject();
             //Adding new employee details to json object
             jsonObject.Add("name", "Ajay");
@@ -102,7 +100,7 @@ namespace EmployeePayrollRestSharpTesting
         {
             //List for storing multiple employeee data json objects
             List<JsonObject> employeeList = new List<JsonObject>();
-            //Object for json
+            //Creating object for json
             JsonObject jsonObjectOne = new JsonObject();
             //Adding new employee details to json object
             jsonObjectOne.Add("name", "Raj");
@@ -127,6 +125,29 @@ namespace EmployeePayrollRestSharpTesting
                 Console.WriteLine("Id: {0} || Name: {1} || Salary :{2} ", employee.Id, employee.Name, employee.Salary);
             });
             Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+        }
+
+        //Test method to update details of json server using put(UC21-TC21.1)
+        [TestMethod]
+        public void TestMethodToUpdateDetails()
+        {
+            //Setting rest request to url and setting method to put to update details
+            RestRequest request = new RestRequest("/employees/7", Method.PUT);
+            //Creating object for json
+            JsonObject json = new JsonObject();
+            //Adding new employee details to json object for updating
+            json.Add("name", "Ankit");
+            json.Add("salary", 30000);
+            //Adding type as json in request and passing the json object as a body of request
+            request.AddParameter("application/json", json, ParameterType.RequestBody);
+            //Executing the request
+            IRestResponse response = client.Execute(request);
+            //Deserializing the json object to employee class object
+            var employee = JsonConvert.DeserializeObject<EmployeeModel>(response.Content);
+            //Checking the response statuscode 200-Ok
+            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+            //Printing deatils
+            Console.WriteLine("Id: {0} || Name: {1} || Salary :{2} ", employee.Id, employee.Name, employee.Salary);
         }
     }
 }
