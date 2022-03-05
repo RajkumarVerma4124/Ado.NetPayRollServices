@@ -20,15 +20,22 @@ namespace EmployeePayrollRestSharpTesting
             client = new RestClient("http://localhost:4000");
         }
 
-        //Test method to return the response got from the request(UC18) 
-        [TestMethod]
+        //Method to return the response got from the request(UC18) 
         public IRestResponse GetAllEmployees()
         {
-            //Arrange
-            RestRequest request = new RestRequest("/employees", Method.GET);
-            //Act
-            IRestResponse response = client.Execute(request);
-            //Return the response
+            IRestResponse response = default;
+            try
+            {
+                //Arrange
+                RestRequest request = new RestRequest("/employees", Method.GET);
+                //Act
+                response = client.Execute(request);
+                //Return the response
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
             return response;
         }
 
@@ -39,7 +46,7 @@ namespace EmployeePayrollRestSharpTesting
             IRestResponse response = GetAllEmployees();
             //Deserialize json object to list
             var jsonObject = JsonConvert.DeserializeObject<List<EmployeeModel>>(response.Content);
-            Assert.AreEqual(8, jsonObject.Count);
+            Assert.AreEqual(7, jsonObject.Count);
             foreach (var employee in jsonObject)
             {
                 Console.WriteLine("Id: {0} || Name: {1} || Salary :{2} ", employee.Id, employee.Name, employee.Salary);
@@ -48,25 +55,78 @@ namespace EmployeePayrollRestSharpTesting
             Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
         }
 
+        //Method to add an employee to Json server using(UC19-TC19.1)
+        public IRestResponse AddToJsonServer(JsonObject jsonObject)
+        {
+            IRestResponse response = default;
+            try
+            {
+                RestRequest request = new RestRequest("/employees", Method.POST);
+                //Adding type as json in request and passing the json object as a body of request
+                request.AddParameter("application/json", jsonObject, ParameterType.RequestBody);
+                //Executing the request
+                response = client.Execute(request);      
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return response;
+        }
+
         //Testing method to add an employee to Json server using json object(UC19-TC19.1)
         [TestMethod]
-        public void GivenEmployeeOnPostAPIReturnEmployees()
+        public void GivenEmployeeOnPostAPIReturnEmployee()
         {
-            RestRequest request = new RestRequest("/employees", Method.POST);
+            /*//Setting rest rquest to url and setiing method to post
+            RestRequest request = new RestRequest("/employees", Method.POST);*/
+            //Object for json
             JsonObject jsonObject = new JsonObject();
+            //Adding new employee details to json object
             jsonObject.Add("name", "Ajay");
             jsonObject.Add("salary", 35000);
-
-            //Adding a parameter to request 
-            request.AddParameter("application/json", jsonObject, ParameterType.RequestBody);
-            //Act
-            IRestResponse response = client.Execute(request);
+            //Calling method to add the employee to json server
+            IRestResponse response = AddToJsonServer(jsonObject);
+            //Deserializing json object to employee class object
             var employee = JsonConvert.DeserializeObject<EmployeeModel>(response.Content);
             Console.WriteLine("Id: {0} || Name: {1} || Salary :{2} ", employee.Id, employee.Name, employee.Salary);
             //Assert
             Assert.AreEqual("Ajay", employee.Name);
             Assert.AreEqual(35000, employee.Salary);
             Assert.AreEqual(HttpStatusCode.Created, response.StatusCode);
+        }
+
+        //Testing method to add mul employee to Json server using json object(UC19-TC19.1)
+        [TestMethod]
+        public void GivenMulEmployeeOnPostAPIReturnMulEmployees()
+        {
+            //List for storing multiple employeee data json objects
+            List<JsonObject> employeeList = new List<JsonObject>();
+            //Object for json
+            JsonObject jsonObjectOne = new JsonObject();
+            //Adding new employee details to json object
+            jsonObjectOne.Add("name", "Raj");
+            jsonObjectOne.Add("salary", 40000);
+            employeeList.Add(jsonObjectOne);
+            JsonObject jsonObjectTwo = new JsonObject();
+            jsonObjectTwo.Add("name", "Mansi");
+            jsonObjectTwo.Add("salary", 35000);
+            employeeList.Add(jsonObjectTwo);
+
+            employeeList.ForEach((jsonObject) =>
+            {
+                //Calling method to add the employee to json server
+                AddToJsonServer(jsonObject);
+            });
+            //Check by getting all employee details
+            IRestResponse response = GetAllEmployees();
+            //Deserializing json object to employee class object
+            var resEmployeeList = JsonConvert.DeserializeObject<List<EmployeeModel>>(response.Content);
+            resEmployeeList.ForEach((employee) =>
+            {
+                Console.WriteLine("Id: {0} || Name: {1} || Salary :{2} ", employee.Id, employee.Name, employee.Salary);
+            });
+            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
         }
     }
 }
