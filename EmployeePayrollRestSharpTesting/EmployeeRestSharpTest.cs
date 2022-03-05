@@ -116,7 +116,7 @@ namespace EmployeePayrollRestSharpTesting
                 //Calling method to add the employee to json server
                 AddToJsonServer(jsonObject);
             });
-            //Check by getting all employee details
+            //Calling the get all emp to check all employee details
             IRestResponse response = GetAllEmployees();
             //Deserializing json object to employee class object
             var resEmployeeList = JsonConvert.DeserializeObject<List<EmployeeModel>>(response.Content);
@@ -144,10 +144,30 @@ namespace EmployeePayrollRestSharpTesting
             IRestResponse response = client.Execute(request);
             //Deserializing the json object to employee class object
             var employee = JsonConvert.DeserializeObject<EmployeeModel>(response.Content);
-            //Checking the response statuscode 200-Ok
+            //Checking the response statuscode
             Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
-            //Printing deatils
+            //Printing details
             Console.WriteLine("Id: {0} || Name: {1} || Salary :{2} ", employee.Id, employee.Name, employee.Salary);
+        }
+
+        //Test method to delete an employee based on id of employee from json server(UC22-TC22.1)
+        [TestMethod]
+        public void TestMethodToDeleteDetails()
+        {
+            //Setting rest request to url and setting method to delete to delete particular id
+            RestRequest request = new RestRequest("/employees/10", Method.DELETE);
+            //Executing the request
+            IRestResponse response = client.Execute(request);
+            //Calling the get all emp to check all employee details if given id is deleted or not 
+            IRestResponse restResponse = GetAllEmployees();
+            //Converting json object to list of employee object
+            var resEmployeeList = JsonConvert.DeserializeObject<List<EmployeeModel>>(restResponse.Content);
+            resEmployeeList.ForEach((employee) =>
+            {
+                Console.WriteLine("Id: {0} || Name: {1} || Salary :{2} ", employee.Id, employee.Name, employee.Salary);
+            });
+            //Checking the response statuscode
+            Assert.AreEqual(HttpStatusCode.OK, restResponse.StatusCode); 
         }
     }
 }
