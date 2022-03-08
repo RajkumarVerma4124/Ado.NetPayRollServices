@@ -21,15 +21,15 @@ namespace EmployeePayrollRestSharpTesting
         }
 
         //Method to return the response got from the request(UC18) 
-        public IRestResponse GetAllEmployees()
+        public RestResponse GetAllEmployees()
         {
-            IRestResponse response = default;
+            RestResponse response = default;
             try
             {
                 //Arrange
-                RestRequest request = new RestRequest("/employees", Method.GET);
+                RestRequest request = new RestRequest("/employees", Method.Get);
                 //Act
-                response = client.Execute(request);
+                response = client.ExecuteAsync(request).Result;
                 //Return the response
             }
             catch (Exception ex)
@@ -43,10 +43,10 @@ namespace EmployeePayrollRestSharpTesting
         [TestMethod]
         public void CallingGetAPIToReturnEmployees()
         {
-            IRestResponse response = GetAllEmployees();
+            RestResponse response = GetAllEmployees();
             //Deserialize json object to list
             var jsonObject = JsonConvert.DeserializeObject<List<EmployeeModel>>(response.Content);
-            Assert.AreEqual(7, jsonObject.Count);
+            Assert.AreEqual(4, jsonObject.Count);
             foreach (var employee in jsonObject)
             {
                 Console.WriteLine("Id: {0} || Name: {1} || Salary :{2} ", employee.Id, employee.Name, employee.Salary);
@@ -56,16 +56,17 @@ namespace EmployeePayrollRestSharpTesting
         }
 
         //Method to add an employee to Json server using(UC19-TC19.1)
-        public IRestResponse AddToJsonServer(JsonObject jsonObject)
+        public RestResponse AddToJsonServer(EmployeeModel emp)
         {
-            IRestResponse response = default;
+            RestResponse response = default;
             try
             {
-                RestRequest request = new RestRequest("/employees", Method.POST);
-                //Adding type as json in request and passing the json object as a body of request
-                request.AddParameter("application/json", jsonObject, ParameterType.RequestBody);
+                RestRequest request = new RestRequest("/employees", Method.Post);
+                //Adding jsonbody in request and passing the employee list as body of request
+                request.AddHeader("Content-type", "application/json");
+                request.AddJsonBody(new { Name = emp.Name, Salary = emp.Salary });
                 //Executing the request
-                response = client.Execute(request);      
+                response = client.ExecuteAsync(request).Result;      
             }
             catch (Exception ex)
             {
@@ -78,19 +79,17 @@ namespace EmployeePayrollRestSharpTesting
         [TestMethod]
         public void GivenEmployeeOnPostAPIReturnEmployee()
         {
-            //Creating object for json
-            JsonObject jsonObject = new JsonObject();
-            //Adding new employee details to json object
-            jsonObject.Add("name", "Ajay");
-            jsonObject.Add("salary", 35000);
-            //Calling method to add the employee to json server
-            IRestResponse response = AddToJsonServer(jsonObject);
-            //Deserializing json object to employee class object
-            var employee = JsonConvert.DeserializeObject<EmployeeModel>(response.Content);
+            //Employee object add employee data 
+            EmployeeModel employee = new EmployeeModel();
+            employee.Name = "Ajay"; employee.Salary = 35000;
+            //Calling the addtojsonserver and passing the employee data
+            RestResponse response = AddToJsonServer(employee);
+            //Converting the json object to employee object
+            var resEmployee = JsonConvert.DeserializeObject<EmployeeModel>(response.Content);
             Console.WriteLine("Id: {0} || Name: {1} || Salary :{2} ", employee.Id, employee.Name, employee.Salary);
             //Assert
-            Assert.AreEqual("Ajay", employee.Name);
-            Assert.AreEqual(35000, employee.Salary);
+            Assert.AreEqual("Ajay", resEmployee.Name);
+            Assert.AreEqual(35000, resEmployee.Salary);
             Assert.AreEqual(HttpStatusCode.Created, response.StatusCode);
         }
 
@@ -98,27 +97,19 @@ namespace EmployeePayrollRestSharpTesting
         [TestMethod]
         public void GivenMulEmployeeOnPostAPIReturnMulEmployees()
         {
-            //List for storing multiple employeee data json objects
-            List<JsonObject> employeeList = new List<JsonObject>();
-            //Creating object for json
-            JsonObject jsonObjectOne = new JsonObject();
-            //Adding new employee details to json object
-            jsonObjectOne.Add("name", "Raj");
-            jsonObjectOne.Add("salary", 40000);
-            employeeList.Add(jsonObjectOne);
-            JsonObject jsonObjectTwo = new JsonObject();
-            jsonObjectTwo.Add("name", "Mansi");
-            jsonObjectTwo.Add("salary", 35000);
-            employeeList.Add(jsonObjectTwo);
-
-            employeeList.ForEach((jsonObject) =>
+            //List for storing multiple employee data 
+            List<EmployeeModel> employeeList = new List<EmployeeModel>();
+            employeeList.Add(new EmployeeModel { Name = "Mahipal", Salary = 25000 });
+            employeeList.Add(new EmployeeModel { Name = "Rahul", Salary = 25000 });
+            employeeList.Add(new EmployeeModel { Name = "Ankit", Salary = 35000 });
+            employeeList.ForEach((employee) =>
             {
                 //Calling method to add the employee to json server
-                AddToJsonServer(jsonObject);
+                AddToJsonServer(employee);
             });
             //Calling the get all emp to check all employee details
-            IRestResponse response = GetAllEmployees();
-            //Deserializing json object to employee class object
+            RestResponse response = GetAllEmployees();
+            //Deserializing json object to list of employee class object
             var resEmployeeList = JsonConvert.DeserializeObject<List<EmployeeModel>>(response.Content);
             resEmployeeList.ForEach((employee) =>
             {
@@ -132,16 +123,12 @@ namespace EmployeePayrollRestSharpTesting
         public void TestMethodToUpdateDetails()
         {
             //Setting rest request to url and setting method to put to update details
-            RestRequest request = new RestRequest("/employees/7", Method.PUT);
-            //Creating object for json
-            JsonObject json = new JsonObject();
-            //Adding new employee details to json object for updating
-            json.Add("name", "Ankit");
-            json.Add("salary", 30000);
-            //Adding type as json in request and passing the json object as a body of request
-            request.AddParameter("application/json", json, ParameterType.RequestBody);
+            RestRequest request = new RestRequest("/employees/8", Method.Put);
+            //Adding jsonbody in request and passing the employee list as body of request
+            request.AddHeader("Content-type", "application/json");
+            request.AddJsonBody(new { Name = "Ankit", Salary = 25000 }); ;
             //Executing the request
-            IRestResponse response = client.Execute(request);
+            RestResponse response = client.ExecuteAsync(request).Result;
             //Deserializing the json object to employee class object
             var employee = JsonConvert.DeserializeObject<EmployeeModel>(response.Content);
             //Checking the response statuscode
@@ -155,11 +142,11 @@ namespace EmployeePayrollRestSharpTesting
         public void TestMethodToDeleteDetails()
         {
             //Setting rest request to url and setting method to delete to delete particular id
-            RestRequest request = new RestRequest("/employees/10", Method.DELETE);
+            RestRequest request = new RestRequest("/employees/5", Method.Delete);
             //Executing the request
-            IRestResponse response = client.Execute(request);
+            RestResponse response = client.ExecuteAsync(request).Result;
             //Calling the get all emp to check all employee details if given id is deleted or not 
-            IRestResponse restResponse = GetAllEmployees();
+            RestResponse restResponse = GetAllEmployees();
             //Converting json object to list of employee object
             var resEmployeeList = JsonConvert.DeserializeObject<List<EmployeeModel>>(restResponse.Content);
             resEmployeeList.ForEach((employee) =>
