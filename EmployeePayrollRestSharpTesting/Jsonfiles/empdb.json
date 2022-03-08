@@ -21,29 +21,19 @@
       "salary": 20000
     },
     {
-      "id": 5,
       "name": "Mahipal",
-      "salary": 13000
+      "salary": 25000,
+      "id": 6
     },
     {
-      "id": 6,
-      "name": "Yash",
-      "salary": 40000
-    },
-    {
-      "name": "Ankit",
-      "salary": 30000,
+      "name": "Rahul",
+      "salary": 25000,
       "id": 7
     },
     {
-      "name": "Ajay",
-      "salary": 35000,
+      "name": "Ankit",
+      "salary": 25000,
       "id": 8
-    },
-    {
-      "name": "Raj",
-      "salary": 40000,
-      "id": 9
     }
   ]
 }
